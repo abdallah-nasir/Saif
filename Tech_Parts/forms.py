@@ -27,3 +27,8 @@ class OrderForm(forms.ModelForm):
         model=Order
         fields=["products"]
        
+class DashboardForm(forms.ModelForm):
+    class Meta:
+        model=Product
+        exclude=["code","slug"]
+       

@@ -163,56 +163,12 @@ def product(request):
     context={"products":product}  
     return render(request,"products.html",context)
 
-def add_product(request,slug):
-    product=Product.objects.get(slug=slug)
-    order=Order.objects.filter(customer_id=request.user.id,ordered=False)
-    if order.exists():
-        my_order=Order.objects.get(customer_id=request.user.id,ordered=False)
-        if product in my_order.products.all():
-            messages.success(request,"already in your cart")           
-        else:
-            for i in order:     
-                i.products.add(product)       
-                messages.success(request,"added to your cart")           
-
-    else:
-        code=product.slug + "_2021"
-        Order.objects.create(customer_id=request.user.id,ordered=False,code=code)
-        my_orders=Order.objects.get(customer_id=request.user.id,ordered=False)
-        # for b in :
-        #     b.products
-        messages.success(request,"added to your cart")           
-
-    return redirect(reverse("home:product",kwargs={"slug":slug}))
-  
-# def wishlist(request):
-#     list=Wishlist.objects.filter(customer_id=request.user.id)
-    
-#     context={}
-#     return render(request,"customer-wishlist.html",context)
-# def add_wishlist(request,slug):
-#     product=Product.objects.get(slug=slug)
-#     list=Wishlist.objects.filter(customer_id=request.user.id,ordered=False)
-#     if list.exists():
-#         my_list=Wishlist.objects.get(customer_id=request.user.id,ordered=False)
-#         if product in my_list.products.all():
-#             messages.success(request,"already in your cart")           
-#         else:
-#             my_list.products.add(product)     
-#             print("DONE")      
-#     else:
-      
-#         Wishlist.objects.create(customer_id=request.user.id,ordered=False)
-#     return redirect(reverse("home:product",kwargs={"slug":slug}))
-  
-# def remove_wishlist(request,slug):  
-#     product=Product.objects.get(slug=slug)   
-#     list=Wishlist.objects.filter(customer_id=request.user.id,ordered=False)
-#     if list.exists():
-#         my_list=Wishlist.objects.get(customer_id=request.user.id,ordered=False)
-#         if product in my_list.products.all():
-#             for i in list:
-#                 i.products.remove(product)  
-#     return redirect(reverse("home:product",kwargs={"slug":slug}))
-  
-
+def dashboard(request):
+    form=DashboardForm(request.POS or None)
+    if form.is_valid():
+        instance=form.save(commit=False)
+        instance.save()
+        messages.success(request,"Product added Successfully")
+        return redirect(reverse("home:home"))
+    context={}
+    return render(request,"dashboard.html",context)

@@ -6,6 +6,7 @@ from django.db.models.fields.related import ForeignObject
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
+from tinymce.models import HTMLField
 # Create your models here.
 
 class Type(models.Model):
@@ -64,7 +65,7 @@ class Product(models.Model):
     category=models.ForeignKey(Category,null=True,on_delete=models.SET_NULL)
     processor=models.ForeignKey(Processor,null=True,on_delete=models.SET_NULL)
     type=models.ForeignKey(Type,null=True,on_delete=models.SET_NULL)
-    details=models.TextField()
+    details=HTMLField()
     code=models.CharField(max_length=100,blank=True)
     slug=models.SlugField(blank=True,max_length=100,unique=True)
     

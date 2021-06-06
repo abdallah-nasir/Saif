@@ -9,7 +9,7 @@ urlpatterns = [
     path("category/",views.category,name="category"),
     path("category/processor/",views.processor,name="processor"),
     path("category/processor/product/",views.product,name="product"),
-    path("product-add/<str:slug>/",views.add_product,name="product_add"),
+    path("dashboard/",views.dashboard,name="dashboard"),
    
 ]
      
