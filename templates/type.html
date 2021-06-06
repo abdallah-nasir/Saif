@@ -1,0 +1,63 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<section id="hero" class="d-flex align-items-center justify-content-center">
+  <div class="container" data-aos="fade-up">
+    <div class="row">
+      <div class="col col-lg-12 col-md-12 col-sm-12">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>
+              <div role="alert" class="alert alert-success alert-dismissible">
+                <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>{{message}}
+              </div>
+            </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+      <div class="col-xl-6 col-lg-8">
+        <h1>select your type processor</h1>
+        <h1>
+     
+    
+        </h1>
+      </div>
+    </div>
+<form method="POST">
+{% csrf_token %}
+  <div class="row mt-5 justify-content-center pl-5px" data-aos="zoom-in" data-aos-delay="250" >
+     
+    {% for i in processor %}
+      <div class="icon-box">
+        <button id="btn_id" name="processor" value="{{i.id}}" class="btn btn-link" >
+        <img src="{{i.image.url}}" style="height: 80px; width:80px;margin-left: 17px;">
+        <h3 class="h3" style="margin-left: 17px;" >{{i.name}} </a></h3></button>
+       
+      </div>
+    {% endfor %}  
+    
+    </div>
+
+</form>
+
+      <!-- <div class="col-xl-2 col-md-4 col-6 mt-4 mt-md-0" style="top: -190px;left: 296px;bottom: 207px;">
+      
+        <div class="icon-box">
+          <img src="../Gp/assets/img/amd.jpg" style="height: 80px; width: 100px;margin-left: 8px;margin-bottom: 3px;">
+          <h3><a href="" style="margin-left: 37px;">AMD</a></h3>
+        </div>
+      
+      </div> -->
+      
+     
+      
+      </div>
+
+</section><!-- End Hero -->
+
+  {% endblock %}
