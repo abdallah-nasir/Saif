@@ -232,7 +232,7 @@ MEDIA_URL="/media/"
 MEDIA_ROOT= BASE_DIR/"media"
 TINYMCE_DEFAULT_CONFIG = {
     "height": "320px",
-    "width": "960px",
+    "width": "auto",
     "menubar": "file edit view insert format tools table help",
     "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code "
     "fullscreen insertdatetime media table paste code help wordcount spellchecker",

@@ -110,7 +110,9 @@
               <li><a href="#">Drop Down 4</a></li>
             </ul>
           </li>
-          <li><a href="#contact">Contact</a></li>
+          {% if request.user.is_superuser %}
+          <li><a href="{% url 'home:dashboard' %}">Dashboard</a></li>
+          {% endif %}
 
         </ul>
         </nav><!-- .nav-menu -->
@@ -118,7 +120,7 @@
         <a href="{% url 'account_logout' %}" class="get-started-btn scrollto">Signout</a>
             {% else %}
          <a href="{% url 'account_login' %}" class="get-started-btn scrollto">Sign in</a>
-        <a href="{% url 'account_signup' %}" class="get-started-btn scrollto">Sign up</a>
+        <a href="{% url 'account_signup' %}" class="get-started-btn scrollto ">Sign up</a>
       
       {% endif %}
     </div>

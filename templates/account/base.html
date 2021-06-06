@@ -111,8 +111,9 @@ ul {
               <li><a href="#">Drop Down 4</a></li>
             </ul>
           </li>
-          <li><a href="#contact">Contact</a></li>
-
+          {% if request.user.is_superuser %}
+          <li><a href="{% url 'home:dashboard' %}">Dashboard</a></li>
+      {% endif %}
         </ul>
         </nav><!-- .nav-menu -->
         {% if request.user.is_authenticated %}

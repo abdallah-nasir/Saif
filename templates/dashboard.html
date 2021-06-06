@@ -1,12 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'account/base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
 {% block content %}
-<div class="container">
+<style type="text/css">
+#center{
+        margin: 0 auto;
+        width:80% /* value of your choice which suits your alignment */
+    }
+</style>
+<div id="cont" class="container">
+    
 <div class="row">
-    <div class="col col-lg-12">
-{{form|crispy}}
+  
+<div id="center" class="col col-lg-6">
+    <h1>Add a New Product</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+        {{form.media}}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
     </div>
 </div>
 

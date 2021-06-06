@@ -83,6 +83,10 @@ body {
     color: white;
     background-color: #3b5998
 }
+#center{
+    margin: 0 auto;
+    width:80% /* value of your choice which suits your alignment */
+}
 </style>
 
       
@@ -90,7 +94,7 @@ body {
 <div id="cont" class="container">
      <h2 class="card-title text-center">Sign In</h2>
     <div class="row pt-5 pb-5">
-        <div class="col col-lg-12 col-sm-12">
+        <div id="center" class="col col-lg-6 col-sm-12">
             <form class="login" method="POST" action="{% url 'account_login' %}">
                 {{form|crispy}}
               {% csrf_token %}

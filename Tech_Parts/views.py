@@ -4,7 +4,7 @@ from .models import *
 from .filters import *
 from .forms import *
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -162,13 +162,18 @@ def product(request):
                 return redirect(reverse("hme:home"))
     context={"products":product}  
     return render(request,"products.html",context)
-
+@login_required
 def dashboard(request):
-    form=DashboardForm(request.POS or None)
-    if form.is_valid():
-        instance=form.save(commit=False)
-        instance.save()
-        messages.success(request,"Product added Successfully")
+    if request.user.is_superuser:
+        form=DashboardForm(request.POST or None,request.FILES or None)
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.save()
+            messages.success(request,"Product added Successfully")
+            return redirect(reverse("home:home"))
+    else:
+        messages.error(request,"you dont have permission to add products")
         return redirect(reverse("home:home"))
-    context={}
+    context={"form":form}
     return render(request,"dashboard.html",context)
+   
