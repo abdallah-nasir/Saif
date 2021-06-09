@@ -12,14 +12,23 @@
       align-items: stretch !important;
     }
   }
+#hero{
+margin-top:3rem !important;
+padding-bottom:0rem !important;
 
+height:110% !important;
+}
+
+.pre-cost{
+  text-decoration: line-through; color: #a5a5a5; 
+}
 </style>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-<div id="hero" class="d-flex align-items-center justify-content-center">
-  <div  class="container mt-3">
+<div id="hero" >
+  <div class="container">
     <div data-aos="fade-up" class="row">
-      <div class="col col-lg-12 col-md-12 col-sm-12 mt-3">
+      <div class="col col-lg-12 col-md-12 col-sm-12 ">
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -35,9 +44,9 @@
         {% endif %}
       </div>
     </div>
-
+   {% if products %}
   <div class="row">
-    {% if products %}
+   
     <form method="POST" class="form-inline">
       {% csrf_token %}
       
@@ -114,19 +123,18 @@
        
         {% endfor %}
       </div>
-      <button class="btn btn-primary mb-5">Submit</button>
+      <button id="btn" class="btn btn-primary ">Submit</button>
    
   </form>
 
-
-
+{% else %}
+<h2>sorry,we dont have what you are looking for</h2>
+{% endif %}
 </div>
 
 
      
-  {% else %}
-<h1>sorry we dont have what you are looking for </h1>
-{% endif %}
+
 
     
    </div>

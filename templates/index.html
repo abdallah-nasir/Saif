@@ -1,9 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style type="text/css">
+.icon-box{
+ padding:50px 0px 22px !important;
+ height:85% !important;
+}
+#hero{
+  margin-top:3rem !important;
+  padding-bottom:0rem !important;
+  
+  height:120% !important;
+  }
+  
+  </style>
 
   <section id="hero" class="d-flex align-items-center justify-content-center">
-    <div class="container" data-aos="fade-up">
+    <div  class="container" data-aos="fade-up">
     
         <div class="row">
           <div class="col col-lg-12 col-md-12 col-sm-12">
@@ -27,18 +40,53 @@
           <h2>We are a team of talented hardware and gamers</h2>
         </div>
       </div>
-<form method="POST">
+<form  method="POST">
   {% csrf_token %}
  
     <div class="row mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
-        {% for i in type %}
         <div class="col-xl-2 col-md-4 col-6">
           <div class="icon-box">
-         <button id="btn_id" class="btn btn-link" type="submit" name="type" value="{{i.id}}" >  <i class="ri-store-line"></i>
-            <h3 class="h3">{{i.name|title}}</h3></button> 
+            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="1" >
+              <i class="ri-gamepad-fill"></i>
+          <h3 class="h3"><p>Gammer</p></h3>
+          </button> 
           </div>
         </div>
-      {% endfor %}
+
+        <div class="col-xl-2 col-md-4 col-6">
+          <div class="icon-box">
+            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="2" >
+              <i class="ri-compasses-2-line "></i>
+          <h3 class="h3"><p>Engineer</p></h3>
+          </button> 
+          </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+          <div class="icon-box">
+            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="3" >
+              <i class="ri-code-box-line"></i>
+          <h3 class="h3"><p>Programmer</p></h3>
+          </button> 
+          </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+          <div class="icon-box">
+            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="4" >
+              <i class="ri-paint-brush-line"></i>
+          <h3 class="h3"><p>Designer</p></h3>
+          </button> 
+          </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+          <div class="icon-box">
+            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="5" >
+              <i class="ri-paint-brush-line"></i>
+          <h3 class="h3"><p>Normal</p></h3>
+          </button> 
+          </div>
+        </div>
+      
+    
       </div>
 </form>
   

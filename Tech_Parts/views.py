@@ -1,24 +1,25 @@
 from django.shortcuts import render,redirect,reverse
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 from .models import *
 from .filters import *
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 # Create your views here.
-
-
+import json
+      
 
 def home(request):
     type=Type.objects.all()
     form=TypeFilter(request.POST or None)
-    if form.is_valid():
+    if form.is_valid():    
         if request.user.is_authenticated:
             my_filter=Filters.objects.filter(customer_id=request.user.id)
             if my_filter.exists():
                 my_filter=Filters.objects.get(customer_id=request.user.id)
                 my_filter.type=form.cleaned_data.get("type")
-                my_filter.save()
+                my_filter.save()  
                 messages.success(request,f"you choosed '{my_filter.type}'")  
                 return redirect(reverse("home:category"))
             else:    
@@ -129,15 +130,13 @@ def product(request):
                 for i in order:  
                     i.products.set(form.cleaned_data.get("products"))
                     i.save()
-                    print("here")     
-                # # instance.save()   
-                # print("saved")
+                return redirect(reverse("home:result"))
             else:
                 Order.objects.create(customer=customer,ordered=True,delivered=False)
                 for i in order:
                     i.products.set(form.cleaned_data.get("products"))
                     i.save()
-                    print("created") 
+                return redirect(reverse("home:result")) 
         else:
             if Filters.objects.filter(device=request.COOKIES["device"]).exists():
                 # my_customer=Customer.objects.get(device=request.COOKIES["device"])
@@ -148,20 +147,37 @@ def product(request):
                         i.products.set(form.cleaned_data.get("products"))
                         i.save()
                         print("here")     
-                    # # instance.save()   
-                    # print("saved")
+                    return redirect(reverse("home:result"))
                 else:    
                     Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
                     for i in order:
                         i.products.set(form.cleaned_data.get("products"))
                         i.save()
-                        print("created") 
+                    return redirect(reverse("home:result"))
                   
             else:
-                messages.success(request,"you dont have order yet")
+                messages.error(request,"you dont have order yet")
                 return redirect(reverse("hme:home"))
     context={"products":product}  
     return render(request,"products.html",context)
+
+def result(request):   
+    if request.user.is_authenticated:
+        order=Order.objects.filter(customer_id=request.user.id,ordered=True,delivered=False)
+        if order.exists():
+            my_order=Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False)
+        else:
+            messages.error(request,"toy don't have order yet")
+            return redirect(reverse("home:home"))
+    else:   
+        order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+        if order.exists():
+            my_order=Order.objects.get(device=request.COOKIES["device"],ordered=True,delivered=False)
+        else:
+            messages.error(request,"toy don't have order yet")
+            return redirect(reverse("home:home"))
+    context={"orders":my_order}
+    return render(request,"result.html",context)
 @login_required
 def dashboard(request):
     if request.user.is_superuser:

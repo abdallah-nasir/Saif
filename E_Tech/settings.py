@@ -139,6 +139,13 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+# ICONS={
+#     "gammer":"ri-gamepad-fill",
+#     "engineer":"ri-compasses-2-line",
+#     "programmer":"ri-code-box-line",
+#     "designer":"ri-paint-brush-line",
+#     "normal":"ri-database-2-line",
+# }
 #allauth 
 SITE_ID=1
 LOGIN_REDIRECT_URL ="/"

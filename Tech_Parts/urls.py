@@ -9,6 +9,8 @@ urlpatterns = [
     path("category/",views.category,name="category"),
     path("category/processor/",views.processor,name="processor"),
     path("category/processor/product/",views.product,name="product"),
+    path("result/",views.result,name="result"),
+
     path("dashboard/",views.dashboard,name="dashboard"),
    
 ]
