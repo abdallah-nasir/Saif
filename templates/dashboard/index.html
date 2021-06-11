@@ -31,7 +31,7 @@
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         
-                        <li><a class="dropdown-item" href="{% url 'account_logout' %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'home:profile' %}">Profile</a></li>
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a></li>
                     </ul>
@@ -51,6 +51,10 @@
                             <a class="nav-link" href="{% url 'home:add' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Add Products
+                            </a>
+                                 <a class="nav-link" href="{% url 'home:supplier' %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Add Supplier
                             </a>
                         </div>
                     </div>
@@ -94,7 +98,7 @@
                                     <th scope="col">#</th>
                                     <th scope="col">product</th>
                                     <th scope="col">Edit</th>
-                                    <th scope="col">Delte</th>
+                                    <th scope="col">Deltee</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -102,16 +106,17 @@
                                   <tr>
                                     <th scope="row">{{forloop.counter}}</th>
                                     <td>{{i.name}}</td>
-                                    <td><a href="{% url 'home:edit' slug=i.slug %}">Edit</a></td>
+                                    <td> <a href="{% url 'home:edit' slug=i.slug %}" type="button" class="btn btn-primary">
+                                       edit
+                                       </a></td>
                                     <td><!-- Button trigger modal -->
                                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal-{{i.id}}">
                                          delete
                                         </button>
                                         </td>
                                   </tr>
-  <form method="POST">
-      {% csrf_token %}
-                                  <!-- Modal -->
+
+                                  <!-- Modal delete -->
   <div class="modal fade" id="exampleModal-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -124,14 +129,16 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <a href="{% url 'home:delete' slug=i.slug %}" type="submit" class="btn btn-primary">Save changes</a>
+          <a href="{% url 'home:delete' slug=i.slug %}" type="submit" class="btn btn-danger">Delete</a>
         </div>
       </div>
     </div>
   </div>
   
-             </form>                      <!-- Modal -->
+                              <!-- Modal delete-->
 
+
+                            <!-- Modal -->
                                   {% endfor %}
                                 </tbody>
                               </table>

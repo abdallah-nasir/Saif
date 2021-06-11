@@ -32,6 +32,7 @@ class DashboardForm(forms.ModelForm):
         model=Product
         exclude=["code","slug"]
        
-# class Result(forms.ModelForm):
-#     class Meta:
-#         model=
+class SupplierForm(forms.ModelForm):
+    class Meta:
+        model=Supplier
+        fields= "__all__"

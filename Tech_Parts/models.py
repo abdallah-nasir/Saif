@@ -50,7 +50,7 @@ class Customer(models.Model):
     def __str__(self):
         return self.name.username
     
-class Supplier(models.Model):
+class Supplier(models.Model): 
     name=models.CharField(max_length=50)
     phone=models.CharField(max_length=11)
     email=models.EmailField(max_length=100)
@@ -106,9 +106,10 @@ class Gammes(models.Model):
         return self.name
         
 class Order(models.Model):
-    customer=models.ForeignKey(Customer,blank=True,null=True,on_delete=models.CASCADE)    
+    customer=models.ForeignKey(Customer,blank=True,null=True,on_delete=models.CASCADE)   
+    supplier=models.ForeignKey(Supplier,on_delete=models.CASCADE,default=1) 
     products=models.ManyToManyField(Product,blank=True)
-    code=models.CharField(max_length=100)
+    code=models.CharField(blank=True,null=True,max_length=100)
     ordered=models.BooleanField(default=False)
     delivered=models.BooleanField(default=False)
     device=models.CharField(max_length=120,blank=True,null=True)
@@ -129,7 +130,10 @@ class Order(models.Model):
             # for i in self.products.all():
             #     price +=i.
             
-            
+    def save(self, *args, **kwargs): # new
+        if not self.code:
+            self.code = str(self.customer.name) +"2021"
+        return super().save(*args, **kwargs) 
             
 class Account(models.Model):
     code=models.ForeignKey(Order,on_delete=models.CASCADE)

@@ -13,9 +13,10 @@ urlpatterns = [
 
     path("dashboard/",views.dashboard,name="dashboard"),
     path("dashboard/add/",views.add,name="add"),
-
     path("dashboard/edit/<str:slug>/",views.edit,name="edit"),
     path("dashboard/delete/<str:slug>/",views.delete,name="delete"),
-
+    path("profile/",views.profile,name="profile"),
+    path("dashboard/supplier/",views.supplier,name="supplier"),
+     
 ]
      

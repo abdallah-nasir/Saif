@@ -109,7 +109,7 @@ def processor(request):
                 return redirect(reverse("home:product")) 
     context={"processor":processor}
     return render(request,"type.html",context)
-
+from django.core.paginator import Paginator
 def product(request):  
     # a=Product.objects.get(id=6)  
     # print(a)
@@ -117,6 +117,10 @@ def product(request):
         if Filters.objects.filter(customer_id=request.user.id).exists():
             filter=Filters.objects.get(customer_id=request.user.id)
             product=Product.objects.filter(category=filter.category,processor=filter.processor) | Product.objects.all()[0:11]
+            paginator = Paginator(product,6) # Show 6 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             # product=Product.objects.all()[0:10]   
         else:
             messages.error(request,"you dont have order yet")   
@@ -125,7 +129,11 @@ def product(request):
         filter=Filters.objects.filter(device=request.COOKIES["device"])
         if filter.exists():
             my_filter=Filters.objects.get(device=request.COOKIES["device"])
-            product=Product.objects.filter(category=my_filter.category,processor=my_filter.processor)
+            product=Product.objects.filter(category=my_filter.category,processor=my_filter.processor) | Product.objects.all()[0:11]
+            paginator = Paginator(product,6) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
         else:
             messages.error(request,"you dont have order yet")
             return redirect(reverse("home:home"))   
@@ -168,7 +176,7 @@ def product(request):
             else:
                 messages.error(request,"you dont have order yet")
                 return redirect(reverse("hme:home"))
-    context={"products":product}  
+    context={"products":page_obj}   
     return render(request,"products.html",context)
 
 def result(request):  
@@ -197,7 +205,7 @@ def result(request):
             my_order.save()   
             send_mail(       
                 "Payment Completed",  
-                f"you have completed a Payment Transaction,\n your code : {my_order.id} \n supplier name : {supplier.name} \n supplier phone : {supplier.phone} \n location : {supplier.address}",
+                f"you have completed a Payment Transaction,\n your code : {my_order.code} \n supplier name : {supplier.name} \n supplier phone : {supplier.phone} \n location : {supplier.address}",
                 settings.EMAIL_HOST_USER,
             [request.user.email,],
                 fail_silently =False
@@ -256,7 +264,7 @@ def edit(request,slug):
         form.save()
         messages.success(request,"Product updated successfully")
         return redirect(reverse("home:dashboard"))
-    context={"form":form}
+    context={"form":form,"product":product}
     return render(request,"dashboard/edit.html",context)
        
 def delete(request,slug):
@@ -266,4 +274,20 @@ def delete(request,slug):
     messages.success(request,"product deleted successfully")
     return redirect(reverse("home:dashboard"))   
     # return render(request,"dashboard/index.html")   
-       
+    
+def profile(request):
+    order=Order.objects.filter(customer_id=request.user.id,ordered=True,delivered=True)
+    context={"order":order}
+    return render(request,"dashboard/profile.html",context)  
+    # return render(request,"dashboard/index.html")   
+    
+def supplier(request):
+    form=SupplierForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request,"you added supplier")
+        return redirect(reverse("home:dashboard"))
+    context={"form":form}
+   
+    return render(request,"dashboard/supplier.html",context)   
+             

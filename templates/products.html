@@ -4,7 +4,7 @@
 
 {% block content %}
 <link href="{% static 'assets/css/stylee.css' %}" rel="stylesheet">
-
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 <style type="text/css">
 @media (max-width: 830px) {
 .form-inline {
@@ -15,10 +15,9 @@
 #my-cont{
   width:100% !important;
   height:auto !important;
-/*background-image:url("{% static 'assets/photo.jpg' %}");
+background-image:url("{% static 'assets/photo.jpg' %}");
 background-size: cover ;
-background-repeat: repeat-x;
-position: auto;*/
+position: auto;
 }
 #conta{
   padding-top:5rem !important;
@@ -133,6 +132,24 @@ position: auto;*/
 {% else %}
 <h2>sorry,we dont have what you are looking for</h2>
 {% endif %}
+<div class="pages">
+  <!-- <p class="loadMore text-center"><a href="#" class="btn btn-template-outlined"><i class="fa fa-chevron-down"></i> Load more</a></p> -->
+  <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+    <ul class="pagination">
+      {% if products.has_previous %}
+      <li class="page-item"><a href="?page={{products.previous_page_number}}" class="page-link"> <i class="fa fa-angle-double-left"></i></a></li>
+      {% endif %}
+
+      {% for i in products.paginator.page_range %}
+      <li class="page-item {% if products.number == i %}active{% endif %}"><a href="?page={{i}}" class="page-link">{{i}}</a></li>
+      {% endfor %}
+
+      {% if products.has_next %}
+      <li class="page-item"><a href="?page={{products.next_page_number}}" class="page-link"><i class="fa fa-angle-double-right"></i></a></li>
+    {% endif %}
+    </ul>
+  </nav>
+</div>
 </div>
 
 
