@@ -2,8 +2,7 @@
 {% load static %}
 
   {% block content %}
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+ 
 
   <style type="text/css">
 #contt{
@@ -22,6 +21,8 @@ margin-top:10rem !important;
 <div class="col">
   <!-- ======= Hero Section ======= -->
   <div class="invoice-box">
+    <form method="POST">
+      {% csrf_token %}
     <table cellpadding="0" cellspacing="0">
       <tr class="top">
         <td colspan="2">
@@ -62,9 +63,20 @@ margin-top:10rem !important;
       </tr>
      
 {% endfor %}
+<tr class='item total'>
+ 
+  <td class="total">Discount</td>
+   {% if request.user.is_anonymous %}
+   <td>%0</td>
+   {% else %}
+   <td>%10</td>
+  {% endif %}
+ 
+</tr>
+
    <tr class="total">
      {% if request.user.is_authenticated %}
-    <td>After Discount</td>
+       <td>After Discount</td>
     <td>${{orders.discount}}</td>
     {% else %}
     <td>Price</td>
@@ -74,9 +86,15 @@ margin-top:10rem !important;
 
   
     </table>
+    {% if request.user.is_authenticated %}
+    <button class="btn btn-primary" type="submit">Checkout ${{orders.discount}}</button>
+    {% endif %}
+  </form>
   </div>
+  
 </div>
 </div>
+{% if filters.type.name == "Gammer" %}
  <div class="row">
    <div class="col">
     <h2> Example</h2>  
@@ -103,6 +121,7 @@ margin-top:10rem !important;
     </div>
   </div>
 </div>
+{% endif %}
     <!-- ======= Counts Section ======= -->
 <div class="row">
    <div class="col">
@@ -111,45 +130,66 @@ margin-top:10rem !important;
       <div class="image col-xl-5 d-flex align-items-stretch justify-content-center justify-content-lg-start" data-aos="fade-right" data-aos-delay="100"></div>
      
        <div class="content d-flex flex-column justify-content-center">
-          <h3>Average FPS</h3>
-         
+        {% if filters.type.name == "Gammer" %}
+        <h3>Average FPS for {{filters.category.name}} </h3>
          <div class="row">
+           {% for i in gammes %}
             <div class="col-md-6 d-md-flex align-items-md-stretch">
               <div class="count-box">
-                <i class="icofont-game-pad"></i>
-                <span data-toggle="counter-up">170</span><span>FPS</span>
-                <p><strong>FORTNITE</strong></p>
+                <i class="{{i.li}}"></i>
+                {% if filters.category.name == "High-End" %}
+                <span data-toggle="counter-up">{{i.gammer_high_end}}</span><span>FPS</span>
+                {% elif filters.category.name == "Medium" %}
+                <span data-toggle="counter-up">{{i.gammer_medium}}</span><span>FPS</span>
+                {% else %}
+                <span data-toggle="counter-up">{{i.gammer_low_end}}</span><span>FPS</span>
+                {% endif %}
+                <p><strong>{{i.name}}</strong></p>
               </div>
             </div>
+          {% endfor %}
+    {% elif filters.type.name == "Engineer" or filters.type.name == "Designer" %} 
+    <h3>Average Point for {{filters.category.name}} </h3>
+    <div class="row">
+      {% for i in gammes %}
+       <div class="col-md-6 d-md-flex align-items-md-stretch">
+         <div class="count-box">
+           <i class="{{i.li}}"></i>
+           {% if filters.category.name == "High-End" %}
+           <span data-toggle="counter-up">{{i.engineer_high_end}}</span><span>FPS</span>
+           {% elif filters.category.name == "Medium" %}
+           <span data-toggle="counter-up">{{i.engineer_medium}}</span><span>FPS</span>
+           {% else %}
+           <span data-toggle="counter-up">{{i.engineer_low_end}}</span><span>FPS</span>
+           {% endif %}
+           <p><strong>{{i.name}}</strong></p>
+         </div>
+       </div>
+{% endfor %}  
 
-            <div class="col-md-6 d-md-flex align-items-md-stretch">
-              <div class="count-box">
-                <i class="icofont-football-alt"></i>
-                <span data-toggle="counter-up">200</span><span>+FPS</span>
-                <p><strong>FIFA21</strong> </p>
-              </div>
-            </div>
+{% elif filters.type.name == "Programmer" %} 
+<h3>Average Core for {{filters.category.name}} </h3>
+<div class="row">
+  {% for i in gammes %}
+   <div class="col-md-6 d-md-flex align-items-md-stretch">
+     <div class="count-box">
+       <i class="{{i.li}}"></i>
+       {% if filters.category.name == "High-End" %}
+       <span data-toggle="counter-up">{{i.programmer_high_end}}</span><span>FPS</span>
+       {% elif filters.category.name == "Medium" %}
+       <span data-toggle="counter-up">{{i.programmer_medium}}</span><span>FPS</span>
+       {% else %}
+       <span data-toggle="counter-up">{{i.programmer_low_end}}</span><span>FPS</span>
+       {% endif %}
+       <p><strong>{{i.name}}</strong></p>
+     </div>
+   </div>
+{% endfor %}  
+{% endif %}
+         
 
-            <div class="col-md-6 d-md-flex align-items-md-stretch">
-              <div class="count-box">
-                <i class="icofont-racing-car"></i>
-                <span data-toggle="counter-up">80</span><span>FPS ULTRA</span>
-                <p><strong>FORZA HORIZEN 4</strong></p>
-              </div>
-            </div>
-
-            <div class="col-md-6 d-md-flex align-items-md-stretch">
-              <div class="count-box">
-                <i class="icofont-boy"></i>
-                <span data-toggle="counter-up">150</span><span>FPS+</span>
-                <p><strong>GTA V</strong> </p>
-              </div>
-            </div>
-          </div> 
-        </div>
-    
-
-
+</div>   
+  </div>
 </div>
 
    </div>

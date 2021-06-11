@@ -129,13 +129,13 @@ USE_TZ = True
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'abdullahnasser6@gmail.com'
-EMAIL_HOST_PASSWORD = "bbvpxmxneyglgqzt"
+EMAIL_HOST_USER = 'pcpuzzle01@gmail.com'
+EMAIL_HOST_PASSWORD = "modernacademy5"
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL= False
 EMAIL_PORT = '587'
 #messgaes Error
-from django.contrib.messages import constants as messages
+from django.contrib.messages import constants as messages        
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
@@ -143,7 +143,7 @@ MESSAGE_TAGS = {
 #     "gammer":"ri-gamepad-fill",
 #     "engineer":"ri-compasses-2-line",
 #     "programmer":"ri-code-box-line",
-#     "designer":"ri-paint-brush-line",
+#     "designer":"ri-paint-brush-line",                    
 #     "normal":"ri-database-2-line",
 # }
 #allauth 

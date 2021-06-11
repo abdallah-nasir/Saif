@@ -44,48 +44,17 @@
   {% csrf_token %}
  
     <div class="row mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
+        {% for i in type %}
         <div class="col-xl-2 col-md-4 col-6">
           <div class="icon-box">
-            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="1" >
-              <i class="ri-gamepad-fill"></i>
-          <h3 class="h3"><p>Gammer</p></h3>
+            <button id="btn_id" class="btn btn-link " type="submit"  name="type" value="{{i.id}}" >
+              <i class="{{i.li}}"></i>
+          <h3 class="h3"><p>{{i.name|title}}</p></h3>
           </button> 
           </div>
         </div>
-
-        <div class="col-xl-2 col-md-4 col-6">
-          <div class="icon-box">
-            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="2" >
-              <i class="ri-compasses-2-line "></i>
-          <h3 class="h3"><p>Engineer</p></h3>
-          </button> 
-          </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6">
-          <div class="icon-box">
-            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="3" >
-              <i class="ri-code-box-line"></i>
-          <h3 class="h3"><p>Programmer</p></h3>
-          </button> 
-          </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6">
-          <div class="icon-box">
-            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="4" >
-              <i class="ri-paint-brush-line"></i>
-          <h3 class="h3"><p>Designer</p></h3>
-          </button> 
-          </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6">
-          <div class="icon-box">
-            <button id="btn_id" class="btn btn-link " type="submit" name="type" value="5" >
-              <i class="ri-paint-brush-line"></i>
-          <h3 class="h3"><p>Normal</p></h3>
-          </button> 
-          </div>
-        </div>
-      
+{% endfor %}
+       
     
       </div>
 </form>

@@ -11,7 +11,7 @@ from tinymce.models import HTMLField
 
 class Type(models.Model):
     name=models.CharField(max_length=50)
- 
+    li=models.CharField(max_length=100)
     def __str__(self):
         return self.name
     
@@ -60,11 +60,11 @@ class Supplier(models.Model):
     
 class Product(models.Model):
     name=models.CharField(max_length=100)
-    image=models.ImageField()
+    image=models.ImageField(blank=True,null=True)
     price=models.PositiveIntegerField(default=0)
-    category=models.ForeignKey(Category,null=True,on_delete=models.SET_NULL)
-    processor=models.ForeignKey(Processor,null=True,on_delete=models.SET_NULL)
-    type=models.ForeignKey(Type,null=True,on_delete=models.SET_NULL)
+    category=models.ForeignKey(Category,null=True,blank=True,on_delete=models.SET_NULL)
+    processor=models.ForeignKey(Processor,null=True,blank=True,on_delete=models.SET_NULL)
+    # type=models.ForeignKey(Type,null=True,on_delete=models.SET_NULL)
     details=HTMLField()
     code=models.CharField(max_length=100,blank=True)
     slug=models.SlugField(blank=True,max_length=100,unique=True)
@@ -90,6 +90,21 @@ class Filters(models.Model):
     def __str__(self):
         return str(self.id)
     
+class Gammes(models.Model):
+    name=models.CharField(max_length=50)
+    gammer_high_end=models.PositiveIntegerField(default=0)
+    gammer_medium=models.PositiveIntegerField(default=0)
+    gammer_low_end=models.PositiveIntegerField(default=0)
+    engineer_high_end=models.PositiveIntegerField(default=0)
+    engineer_medium=models.PositiveIntegerField(default=0)
+    engineer_low_end=models.PositiveIntegerField(default=0)
+    programmer_high_end=models.PositiveIntegerField(default=0)
+    programmer_mediuum=models.PositiveIntegerField(default=0)
+    programmer_low_end=models.PositiveIntegerField(default=0)
+    li=models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+        
 class Order(models.Model):
     customer=models.ForeignKey(Customer,blank=True,null=True,on_delete=models.CASCADE)    
     products=models.ManyToManyField(Product,blank=True)

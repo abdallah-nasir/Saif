@@ -12,21 +12,26 @@
       align-items: stretch !important;
     }
   }
-#hero{
-margin-top:3rem !important;
-padding-bottom:0rem !important;
-
-height:110% !important;
+#my-cont{
+  width:100% !important;
+  height:auto !important;
+/*background-image:url("{% static 'assets/photo.jpg' %}");
+background-size: cover ;
+background-repeat: repeat-x;
+position: auto;*/
 }
-
+#conta{
+  padding-top:5rem !important;
+  padding-bottom:5rem !important;
+}
 .pre-cost{
   text-decoration: line-through; color: #a5a5a5; 
 }
 </style>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-<div id="hero" >
-  <div class="container">
+<div id="my-cont" >
+  <div id="conta" class="container">
     <div data-aos="fade-up" class="row">
       <div class="col col-lg-12 col-md-12 col-sm-12 ">
         {% if messages %}
@@ -53,7 +58,7 @@ height:110% !important;
     {% for i in products %}
 
 
-    <div class="col col-lg-4 col-md-6">
+    <div class="col col-lg-4 col-md-6 col-sm-12">
         <div class="card" style="width: 18rem;">
           <img src="{{i.image.url}}" class="card-img-top" alt="{{i.name}}">
           <div class="card-body">
@@ -118,9 +123,7 @@ height:110% !important;
       </div>
     </div>
   </div>
-</div>
-
-       
+</div> 
         {% endfor %}
       </div>
       <button id="btn" class="btn btn-primary ">Submit</button>

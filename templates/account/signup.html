@@ -1,7 +1,7 @@
 {% extends "account/base.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
-
+{% load socialaccount %}
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
 {% block content %}
@@ -9,7 +9,90 @@
 #center{
     margin: 0 auto;
     width:80% /* value of your choice which suits your alignment */
+
+  }
+  :root {
+    --input-padding-x: 1.5rem;
+    --input-padding-y: .75rem
 }
+
+body {
+   
+}
+
+.card-signin {
+    border: 0;
+    border-radius: 0rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1)
+}
+
+.card-signin .card-title {
+    margin-bottom: 2rem;
+    font-weight: 300;
+    font-size: 1.5rem
+}
+
+.card-signin .card-body {
+    padding: 2rem
+}
+
+.form-signin {
+    width: 100%
+}
+
+.form-signin .btn {
+    font-size: 80%;
+    border-radius: 0rem;
+    letter-spacing: .1rem;
+    font-weight: bold;
+    padding: 1rem;
+    transition: all 0.2s
+}
+
+.form-label-group {
+    position: relative;
+    margin-bottom: 1rem
+}
+
+.form-label-group input {
+    height: auto
+}
+
+.form-label-group>input,
+.form-label-group>label {
+    padding: var(--input-padding-y) var(--input-padding-x)
+}
+
+.form-label-group>label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+    line-height: 1.5;
+    color: #495057;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    transition: all .1s ease-in-out
+}
+
+.form-control:focus {
+    box-shadow: 10px 0px 0px 0px #ffffff !important
+}
+
+.btn-google {
+    color: white;
+    background-color: #ea4335
+}
+
+.btn-facebook {
+    color: white;
+    background-color: #3b5998
+}
+#center{
+    margin: 0 auto;
+    width:80% /* value of your choice which suits your alignment */
 </style>
 <div id="cont" class="container pb-5">
   <div class="row">
@@ -26,6 +109,9 @@
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
         {% endif %}
         <button  class='btn btn-primary' type="submit">{% trans "Sign Up" %} &raquo;</button>
+        <hr class="my-4">
+        <a href="{%  provider_login_url 'google'  %}" class="btn btn-lg btn-google btn-block text-uppercase" ><i class="fab fa-google mr-2"></i> Sign in with Google</a>
+     <a href="{%  provider_login_url 'facebook'  %}" class="btn btn-lg btn-facebook btn-block text-uppercase"><i class="fab fa-facebook-f mr-2"></i> Sign in with Facebook</a>
       </form>
       
     </div>
