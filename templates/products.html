@@ -38,7 +38,8 @@ position: auto;
             {% for message in messages %}
             <li>
               <div role="alert" class="alert alert-success alert-dismissible">
-                <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>{{products.count}} {{message}}
+                <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                 {{ products.paginator.count }} {{message}}
               </div>
             </li>
 
@@ -57,7 +58,7 @@ position: auto;
     {% for i in products %}
 
 
-    <div class="col col-lg-4 col-md-6 col-sm-12">
+    <div class="col col-lg-6 col-md- col-sm-12">
         <div class="card" style="width: 18rem;">
           <img src="{{i.image.url}}" class="card-img-top" alt="{{i.name}}">
           <div class="card-body">

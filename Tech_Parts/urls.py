@@ -6,7 +6,7 @@ from . import views
 app_name="Tech_Parts"
 urlpatterns = [
     path('',views.home,name="home" ),
-    path("category/",views.category,name="category"),
+    path("category/",views.category,name="category"),   
     path("category/processor/",views.processor,name="processor"),
     path("category/processor/product/",views.product,name="product"),
     path("result/",views.result,name="result"),

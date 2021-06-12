@@ -64,7 +64,7 @@ class Product(models.Model):
     price=models.PositiveIntegerField(default=0)
     category=models.ForeignKey(Category,null=True,blank=True,on_delete=models.SET_NULL)
     processor=models.ForeignKey(Processor,null=True,blank=True,on_delete=models.SET_NULL)
-    # type=models.ForeignKey(Type,null=True,on_delete=models.SET_NULL)
+    type=models.ForeignKey(Type,default=6,null=True,on_delete=models.SET_NULL)
     details=HTMLField()
     code=models.CharField(max_length=100,blank=True)
     slug=models.SlugField(blank=True,max_length=100,unique=True)

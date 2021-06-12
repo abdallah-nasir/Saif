@@ -18,7 +18,36 @@ margin-top:10rem !important;
 
 <div id="contt" class="container">
 <div class='row'>
+ 
 <div class="col">
+  {% if error %}
+
+  <ul class="messages">
+    
+    <li>
+      <div role="alert" class="alert alert-danger alert-dismissible">
+        <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+        make sure you have full package Gpu,Cpu,Ram,Motherboard and SSD
+      </div>
+    </li>
+
+
+</ul>
+
+  {%endif%}
+  {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+      <li>
+        <div role="alert" class="alert alert-{{message.tags}} alert-dismissible">
+          <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+           {{ products.paginator.count }} {{message}}
+        </div>
+      </li>
+
+  {% endfor %}
+  </ul>
+  {% endif %}
   <!-- ======= Hero Section ======= -->
   <div class="invoice-box">
     <form method="POST">
@@ -87,7 +116,11 @@ margin-top:10rem !important;
   
     </table>
     {% if request.user.is_authenticated %}
-    <button class="btn btn-primary" type="submit">Checkout ${{orders.discount}}</button>
+    {% if error%}
+    <button class="btn btn-primary" type="submit" disabled>Checkout ${{orders.discount}}</button>
+    {%else%}
+    <button class="btn btn-primary" type="submit" >Checkout ${{orders.discount}}</button>
+{% endif %}
     {% endif %}
   </form>
   </div>
