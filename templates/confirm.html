@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{%  load static %}
+{% block content %}
+<style type="text/css">
+#my-cont{
+width:100% !important;
+height:auto !important;
+      background-image:url("{% static 'assets/2458797.jpg' %}");
+      background-size: cover ;
+      position: auto;
+      }
+
+#conta{
+padding-top:5rem !important;
+padding-bottom:5rem !important;
+}
+.h1{
+margin-top:5rem !important;
+}
+.card-body{
+    background-color: #fb8106;
+   max-height:30% !important;
+}
+.card-text{
+   color: white !important;
+   font-weight: 400;
+font-family: "Raleway", sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    text-align: center;
+}
+.p-tag{
+    margin-top:0.5rem;
+    margin-bottom:1rem;
+    padding-left:1.2rem;
+    color:#666666;
+}
+.my-ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+  }
+
+.nav-item{
+float: left;
+float: left;
+  }
+</style>
+<div id="my-cont" >
+
+    <div id="conta" class="container">
+        <div class="row">
+            <div class="col offset-0.5" >
+              <div class="card " style="width:auto; height:auto;">
+                  <h1 class="h1">Thank you for ordering through us</h1>
+                  <div class="card-body">
+                      <div class="code">
+                        <h4 class="card-text">
+                            "The code has been sent to your E-mail {{request.user.email}} from this code you can buy from this stores" <br>
+                            
+                    </div>
+                                     
+                  </div>
+                  <p class="p-tag"> By using your code you can buy from this stores</p>
+                  <ul class="my-ul  align-items-center ">
+                      {% for i in supplier %}
+                    <li class="nav-item "style="top: 316px;">
+                        <a class="nav-link dropdown-toggle"  href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         <img src="{{i.image.url}}" style="height:150px  ; ">
+                        </a>
+                        <div class="dropdown-menu">
+                            <form class="px-4 py-3">
+                              <div class="form-group">
+                         <h3>{{i.name|title}} </h3>
+                              <ul>
+                                  <li>Address:{{i.address}} </li>
+                                  <li>Phone: {{i.phone}} </li>
+                                  <li>loction:<a href="{{i.location}}">click here</a></li>
+                              </ul>
+                              </div>
+                            </div>
+               
+              </li>
+              {% endfor %}
+                </ul>
+                
+              
+                  
+                
+  
+            </div>
+        </div>
+   
+    </div>
+
+</div>
+  
+
+{% endblock %}

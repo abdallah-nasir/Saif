@@ -31,7 +31,7 @@ class OrderForm(forms.ModelForm):
 class DashboardForm(forms.ModelForm):
     class Meta:
         model=Product
-        exclude=["code","slug","type"]
+        exclude=["code","slug"]
        
 class SupplierForm(forms.ModelForm):
     class Meta:

@@ -8,7 +8,7 @@ class Ordered(admin.ModelAdmin):
 admin.site.register(Customer)
 admin.site.register(Supplier)
 admin.site.register(Product)
-admin.site.register(Account)
+# admin.site.register(Account)
 admin.site.register(Order,Ordered)
 admin.site.register(Category)
 admin.site.register(Type)

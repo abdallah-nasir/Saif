@@ -36,8 +36,17 @@
   .icon-box .h3{
   color:#fff !important;
   }
-  #btn_id{
+#btn_id{
+  margin-bottom:1cm;
     text-decoration: none !important;
+    border: none !important;
+outline:none !important;
+cursor: pointer !important;
+background-color:#3b3b3b;
+  
+  }
+#btn_id:focus{
+outline:none !important;
   
   }
 #cont{
@@ -46,6 +55,10 @@
     }
     ul {
       list-style-type: none !important;
+  }
+
+#click{
+
   }
 </style>
   <script type="text/javascript">
@@ -90,9 +103,9 @@
         <ul>
           <li class="active"><a href="{% url 'home:home' %}">Home</a></li>
          
-          <li><a href="{% url 'home:home' %}">Services</a></li>
+          <li><a href="{% url 'home:team' %}">Services</a></li>
          
-          <li><a href="{% url 'home:home' %}">Team</a></li>
+          <li><a href="{% url 'home:team' %}">Team</a></li>
           
           {% if request.user.is_superuser %}
           <li><a href="{% url 'home:dashboard' %}">Dashboard</a></li>

@@ -12,11 +12,6 @@ import json
       
 
 def home(request):
-    # gammes=Gammes.objects.get(name="GTA V")
-    # gammes.gammer_high_end,gammes.gammer_medium,gammes.gammer_low_end=[76,2,3]
-    # gammes.save()   
-    # print("DONE")
-            
     type=Type.objects.all().order_by("-id")
     form=TypeFilter(request.POST or None)
     if form.is_valid():
@@ -35,8 +30,13 @@ def home(request):
                     return redirect(reverse("home:category"))
             else:    
                 Filters.objects.create(customer_id=request.user.id,type=form.cleaned_data.get("type"))
-                messages.success(request,f" you choosed '{form.cleaned_data.get('type')}'")
-                return redirect(reverse("home:category"))
+                my_filter=Filters.objects.get(customer_id=request.user.id)
+                if my_filter.type.name == "Normal":
+                    messages.success(request,f" products mathces with your choice ")
+                    return redirect(reverse("home:product"))    
+                else:            
+                    messages.success(request,f" you choosed '{form.cleaned_data.get('type')}'")
+                    return redirect(reverse("home:category"))
         else:
             if Filters.objects.filter(device=request.COOKIES["device"]).exists():
                 my_filter=Filters.objects.get(device=request.COOKIES["device"])
@@ -50,13 +50,18 @@ def home(request):
                     return redirect(reverse("home:category"))
             else:    
                 Filters.objects.create(device=request.COOKIES["device"],type=form.cleaned_data.get("type"))
-                messages.success(request,f"you choosed '{form.cleaned_data.get('type')}'")
-                return redirect(reverse("home:category"))
+                my_filter=Filters.objects.get(device=request.COOKIES["device"])
+                if my_filter.type.name == "Normal":
+                    messages.success(request,f" products mathces with your choice ")
+                    return redirect(reverse("home:product"))
+                else:
+                    messages.success(request,f"you choosed '{my_filter.type}'")
+                    return redirect(reverse("home:category"))
 
     context={"type":type,"form":form}
     return render(request,"index.html",context)
    
-def category(request):
+def category(request):  
     category=Category.objects.all()  
     form=CategoryFilter(request.POST or None)
     if form.is_valid():
@@ -119,15 +124,13 @@ def processor(request):
     return render(request,"type.html",context)
 from django.core.paginator import Paginator
 def product(request):  
-    # a=Product.objects.get(id=6)  
-    # print(a)
     if request.user.is_authenticated:
         if Filters.objects.filter(customer_id=request.user.id).exists():
             filter=Filters.objects.get(customer_id=request.user.id)
             if filter.type.name == "Normal":
                 product=Product.objects.filter(type=filter.type)
             else:
-                product=Product.objects.filter(category=filter.category,processor=filter.processor,type=filter.type) | Product.objects.all()[0:11]
+                product=Product.objects.filter(category=filter.category,processor=filter.processor) | Product.objects.all()[0:11]
             paginator = Paginator(product,6) # Show 6 contacts per page.
 
             page_number = request.GET.get('page')
@@ -154,22 +157,28 @@ def product(request):
     form=OrderForm(request.POST or None)
     if form.is_valid(): 
         instance=form.save(commit=False)   
-        if request.user.is_authenticated:  
-            customer=Customer.objects.get(name=request.user)
-            order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
-            if order.exists():
-                my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
 
-                for i in order:  
-                    i.products.set(form.cleaned_data.get("products"))
-                    i.save()
-                return redirect(reverse("home:result"))
-            else:
-                Order.objects.create(customer=customer,ordered=True,delivered=False)
-                for i in order:
-                    i.products.set(form.cleaned_data.get("products"))
-                    i.save()
-                return redirect(reverse("home:result")) 
+                    for i in order:  
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
         else:
             if Filters.objects.filter(device=request.COOKIES["device"]).exists():
                 # my_customer=Customer.objects.get(device=request.COOKIES["device"])
@@ -204,9 +213,10 @@ def result(request):
         else:
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home")) 
-        if order.exists():      
-            my_order=Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False)
-            # try:   
+        if order.exists():    
+            my_order=Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False)  
+            if my_order.products.count() < 1:
+                error=True                       
             for i in my_order.products.all():
                 if my_order.products.filter(name__icontains="ssd").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="cpu").exists() :
                     error=False
@@ -228,13 +238,12 @@ def result(request):
             my_order.save()      
             send_mail(         
                 "Payment Completed",  
-                f"you have completed a Payment Transaction,\n your code : {my_order.code} \n supplier name : {supplier.name} \n supplier phone : {supplier.phone} \n location : {supplier.address}",
+                f"you have completed a Payment Transaction,\n your code : {my_order.code} \n supplier name : {supplier.name} \n supplier phone : {supplier.phone} \n location : {supplier.location} \n address: {supplier.address}",
                 settings.EMAIL_HOST_USER,
             [request.user.email,],
                 fail_silently =False
             )
-            
-        
+            return redirect(reverse("home:confirm"))
             # supllier=Supplier.objects.all()[0]
                
                
@@ -245,18 +254,25 @@ def result(request):
         if filter.exists():
             my_filter=Filters.objects.get(device=request.COOKIES["device"])
         else:
-            messages.error(request,"toy don't have order yet")
+            messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home")) 
         if order.exists():
             my_order=Order.objects.get(device=request.COOKIES["device"],ordered=True,delivered=False)
         else:
-            messages.error(request,"toy don't have order yet")
+            messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home"))
 
     context={"orders":my_order,"filters":my_filter,"gammes":gammes,"error":error} 
-    return render(request,"result.html",context)
+    return render(request,"result.html",context)  
 
-
+    
+def confirm(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse("home:home"))
+    supplier=Supplier.objects.all()
+    context={"supplier":supplier}
+    return render(request,"confirm.html",context)   
+                  
 @login_required
 def dashboard(request):  
     products=Product.objects.all().order_by("category")
@@ -314,4 +330,9 @@ def supplier(request):
     context={"form":form}
    
     return render(request,"dashboard/supplier.html",context)   
-             
+
+
+def team(request):
+   
+    return render(request,"team.html")   
+

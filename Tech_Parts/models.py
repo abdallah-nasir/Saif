@@ -52,9 +52,11 @@ class Customer(models.Model):
     
 class Supplier(models.Model): 
     name=models.CharField(max_length=50)
+    image=models.ImageField()
     phone=models.CharField(max_length=11)
-    email=models.EmailField(max_length=100)
+    # email=models.EmailField(max_length=100)
     address=models.CharField(max_length=120)
+    location=models.CharField(max_length=120)
     def __str__(self):
         return self.name
     
@@ -135,13 +137,13 @@ class Order(models.Model):
             self.code = str(self.customer.name) +"2021"
         return super().save(*args, **kwargs) 
             
-class Account(models.Model):
-    code=models.ForeignKey(Order,on_delete=models.CASCADE)
-    invoice=models.PositiveIntegerField(blank=True,null=True)
-    supplier=models.ForeignKey(Supplier,on_delete=models.CASCADE)
+# class Account(models.Model):
+#     code=models.ForeignKey(Order,on_delete=models.CASCADE)
+#     invoice=models.PositiveIntegerField(blank=True,null=True)
+#     supplier=models.ForeignKey(Supplier,on_delete=models.CASCADE)
     
-    def __Str__(self):
-        return (f"{self.supplier.name} account")
+#     def __Str__(self):
+#         return (f"{self.supplier.name} account")
     
     
     
