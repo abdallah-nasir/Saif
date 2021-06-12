@@ -130,11 +130,11 @@ class Order(models.Model):
         return percentage
             # disc=0
             # for i in self.products.all():
-            #     price +=i.
+            #     price +=i.    
             
     def save(self, *args, **kwargs): # new
         if not self.code:
-            self.code = str(self.customer.name) +"2021"
+            self.code = str(self.id)+ "-" +"2021"
         return super().save(*args, **kwargs) 
             
 # class Account(models.Model):

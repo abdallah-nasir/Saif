@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import django_heroku
+import dj_database_url
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,11 +56,14 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "django.middleware.locale.LocaleMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
 ]
 
 ROOT_URLCONF = 'E_Tech.urls'
@@ -91,6 +96,10 @@ DATABASES = {
         'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
+
+DATABASE_URL="postgres://wepkwqascnnoum:44e48cea5a774f5ddd56b56077198ec844931e1d66ede4511d9a4b586d97bcee@ec2-3-215-57-87.compute-1.amazonaws.com:5432/d7phnc7lnb5bqu"
+DATABASES['default'] = dj_database_url.config(default=DATABASE_URL)
+
 
 
 # Password validation
@@ -237,6 +246,11 @@ STATICFILES_DIRS=[
 MEDIA_URL="/media/"
 
 MEDIA_ROOT= BASE_DIR/"media"
+
+STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+django_heroku.settings(locals())
+
 TINYMCE_DEFAULT_CONFIG = {
     "height": "320px",
     "width": "auto",

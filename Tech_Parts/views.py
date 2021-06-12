@@ -314,7 +314,7 @@ def delete(request,slug):
     messages.success(request,"product deleted successfully")
     return redirect(reverse("home:dashboard"))   
     # return render(request,"dashboard/index.html")   
-    
+@login_required
 def profile(request):
     order=Order.objects.filter(customer_id=request.user.id,ordered=True,delivered=True)
     context={"order":order}
@@ -330,9 +330,9 @@ def supplier(request):
     context={"form":form}
    
     return render(request,"dashboard/supplier.html",context)   
+  
+      
+def team(request):      
 
-
-def team(request):
-   
     return render(request,"team.html")   
 

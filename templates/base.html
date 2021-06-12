@@ -106,7 +106,8 @@ outline:none !important;
           <li><a href="{% url 'home:team' %}">Services</a></li>
          
           <li><a href="{% url 'home:team' %}">Team</a></li>
-          
+          <li><a href="{% url 'home:profile' %}">Profile</a></li>
+
           {% if request.user.is_superuser %}
           <li><a href="{% url 'home:dashboard' %}">Dashboard</a></li>
           {% endif %}
