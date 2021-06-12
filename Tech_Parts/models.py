@@ -106,7 +106,8 @@ class Gammes(models.Model):
     li=models.CharField(max_length=100)
     def __str__(self):
         return self.name
-        
+import random
+
 class Order(models.Model):
     customer=models.ForeignKey(Customer,blank=True,null=True,on_delete=models.CASCADE)   
     supplier=models.ForeignKey(Supplier,on_delete=models.CASCADE,default=1) 
@@ -131,12 +132,13 @@ class Order(models.Model):
             # disc=0
             # for i in self.products.all():
             #     price +=i.    
-            
+              
     def save(self, *args, **kwargs): # new
-        if not self.code:
-            self.code = "order " +self.id+ "-" +"2021"
+        if not self.code: 
+            num=random.random()
+            self.code =str(num) + "-2021"
         return super().save(*args, **kwargs) 
-            
+              
 # class Account(models.Model):
 #     code=models.ForeignKey(Order,on_delete=models.CASCADE)
 #     invoice=models.PositiveIntegerField(blank=True,null=True)
