@@ -12,7 +12,7 @@ import json
       
 
 def home(request):
-    type=Type.objects.all().order_by("-id")
+    type=Type.objects.all().order_by("id")
     form=TypeFilter(request.POST or None)
     if form.is_valid():
       
