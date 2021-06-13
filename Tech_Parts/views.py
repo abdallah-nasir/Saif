@@ -163,12 +163,11 @@ def product(request):
                 order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
                 if order.exists():
                     my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
-                    # b=request.POST.getlist("products")
+                    b=request.POST.getlist("products")
                     for i in order:  
-                        # for d in b:
-                        i.products.add(request.POST.get("products"))
-                            
-                        i.save()
+                        for d in b:
+                            i.products.add(d)
+                            i.save()
                            
                     return redirect(reverse("home:result"))
                 else:
@@ -188,9 +187,12 @@ def product(request):
                 order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
                 if order.exists():
                     # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
                     for i in order:  
-                        i.products.add(request.POST.get("products"))
-                        i.save()
+                        for d in b:
+                            i.products.add(d)
+                            i.save()
+                           
                     return redirect(reverse("home:result"))
                 else:    
                     Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)

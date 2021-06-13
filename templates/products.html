@@ -66,10 +66,10 @@ position: auto;
           </div>
           {% if request.user.is_authenticated %}
           <div ><span>after discount </span><span>{{i.discount}} EGP </span></div>
-          <div ><span>before discount</span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span> {{i.price}} EGP</small></div>
+          <div ><span>before discount </span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span> {{i.price}} EGP</small></div>
           {% else %}
-          <div ><span>price</span><span>{{i.price}} EGP </span></div>
-          <div ><span>our discount</span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span> {{i.discount}} EGP</small></div>
+          <div ><span>price </span><span>{{i.price}} EGP </span></div>
+          <div ><span>our discount </span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span> {{i.discount}} EGP</small></div>
           {% endif %}
           <br>
             <!-- <p class="card-text">Price: {{i.price}}</p> -->
