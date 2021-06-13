@@ -97,7 +97,7 @@ DATABASES = {
     }
 }
 
-DATABASE_URL="postgres://wepkwqascnnoum:44e48cea5a774f5ddd56b56077198ec844931e1d66ede4511d9a4b586d97bcee@ec2-3-215-57-87.compute-1.amazonaws.com:5432/d7phnc7lnb5bqu"
+DATABASE_URL= "postgres://obyidxalwosihe:20261adbae0585b0bfe99a6da4e1b13203f63bfe1f33da62a05a446a22022851@ec2-34-195-233-155.compute-1.amazonaws.com:5432/d84157ac50tjvp"
 DATABASES['default'] = dj_database_url.config(default=DATABASE_URL)
 
 

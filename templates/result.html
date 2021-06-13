@@ -53,39 +53,37 @@ margin-top:10rem !important;
     <form method="POST">
       {% csrf_token %}
     <table cellpadding="0" cellspacing="0">
-      <tr class="top">
-        <td colspan="2">
-        
-        </td>
-      </tr>
 
-      <tr class="information">
-        <td colspan="2">
-        
-        </td>
-      </tr>
 
       <tr class="heading">
         <td>Payment Method</td>
-
-        <td>Check {{orders.id}}</td>
+        <td></td>
+        <td></td>
+        <td>Order {{orders.id}}</td>
       </tr>
 
       <tr class="details">
         <td>Check</td>
-
+        <td></td>
+        <td></td>
         <td>{{orders.total_price}}</td>
       </tr>
 
       <tr class="heading">
         <td>Item</td>
+        <td></td>
 
+        <td>remove</td>
         <td>Price</td>
        
       </tr>
 {% for i in orders.products.all %}
       <tr class="item">
+       
         <td>{{i.name}}</td>
+        <td></td>
+        <td><a href="{% url 'home:order_edit' slug=i.slug %}">delete</a></td>
+
 
         <td>${{i.price}}</td>
        
@@ -96,8 +94,12 @@ margin-top:10rem !important;
  
   <td class="total">Discount</td>
    {% if request.user.is_anonymous %}
+   <td></td>
+   <td></td>
    <td>%0</td>
    {% else %}
+   <td></td>
+   <td></td>
    <td>%10</td>
   {% endif %}
  
@@ -106,15 +108,22 @@ margin-top:10rem !important;
    <tr class="total">
      {% if request.user.is_authenticated %}
        <td>After Discount</td>
+       <td></td>
+       <td></td>
     <td>${{orders.discount|floatformat:2}}</td>
     {% else %}
+  
     <td>Price</td>
+    <td></td>
+    <td></td>
       <td>${{orders.total_price|floatformat:2}}</td>
       {% endif %}
       </tr>
 
   
     </table>
+ 
+   
     {% if request.user.is_authenticated %}
     {% if error%}
     <button class="btn btn-primary" type="submit" disabled>Checkout ${{orders.discount|floatformat:2}}</button>

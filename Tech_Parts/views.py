@@ -155,7 +155,7 @@ def product(request):
             messages.error(request,"you dont have order yet")
             return redirect(reverse("home:home"))   
     form=OrderForm(request.POST or None)
-    if form.is_valid(): 
+    if form.is_valid():  
         instance=form.save(commit=False)   
         if request.user.is_authenticated: 
             if Filters.objects.filter(customer_id=request.user.id).exists():
@@ -163,10 +163,13 @@ def product(request):
                 order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
                 if order.exists():
                     my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
-
+                    # b=request.POST.getlist("products")
                     for i in order:  
-                        i.products.set(form.cleaned_data.get("products"))
+                        # for d in b:
+                        i.products.add(request.POST.get("products"))
+                            
                         i.save()
+                           
                     return redirect(reverse("home:result"))
                 else:
                     Order.objects.create(customer=customer,ordered=True,delivered=False)
@@ -186,7 +189,7 @@ def product(request):
                 if order.exists():
                     # print(form.cleaned_data.get("products"))
                     for i in order:  
-                        i.products.set(form.cleaned_data.get("products"))
+                        i.products.add(request.POST.get("products"))
                         i.save()
                     return redirect(reverse("home:result"))
                 else:    
@@ -201,6 +204,21 @@ def product(request):
                 return redirect(reverse("hme:home"))
     context={"products":page_obj}   
     return render(request,"products.html",context)
+      
+def order_edit(request,slug):
+    if request.user.is_authenticated:
+        order=Order.objects.filter(customer_id=request.user.id,ordered=True,delivered=False)
+        print(order)
+        product=Product.objects.get(slug=slug)
+        for i in order:   
+            i.products.remove(product)      
+    else:
+        order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+        print(order)
+        product=Product.objects.get(slug=slug)
+        for i in order:   
+            i.products.remove(product)  
+    return redirect(reverse("home:result"))
 
 def result(request):  
     gammes=Gammes.objects.all() 
@@ -210,7 +228,7 @@ def result(request):
         filter=Filters.objects.filter(customer_id=request.user.id) 
         if filter.exists():
             my_filter=Filters.objects.get(customer_id=request.user.id)
-        else:
+        else:     
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home")) 
         if order.exists():    
@@ -219,6 +237,8 @@ def result(request):
                 error=True                       
             for i in my_order.products.all():
                 if my_order.products.filter(name__icontains="ssd").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="cpu").exists() :
+                    error=False   
+                elif my_order.products.filter(type__name="Normal"):
                     error=False
                 else:  
                     error=True          
