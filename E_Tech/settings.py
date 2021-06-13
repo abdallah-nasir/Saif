@@ -91,14 +91,28 @@ WSGI_APPLICATION = 'E_Tech.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'db.sqlite3'),
+
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+        'NAME': "d84157ac50tjvp",
+
+        'USER': 'obyidxalwosihe',
+
+        'PASSWORD': '20261adbae0585b0bfe99a6da4e1b13203f63bfe1f33da62a05a446a22022851',
+
+        'HOST': 'ec2-34-195-233-155.compute-1.amazonaws.com',
+
+        'PORT': '5432',
+
     }
+
 }
 
-DATABASE_URL= "postgres://obyidxalwosihe:20261adbae0585b0bfe99a6da4e1b13203f63bfe1f33da62a05a446a22022851@ec2-34-195-233-155.compute-1.amazonaws.com:5432/d84157ac50tjvp"
-DATABASES['default'] = dj_database_url.config(default=DATABASE_URL)
+
+# DATABASE_URL= "postgres://obyidxalwosihe:20261adbae0585b0bfe99a6da4e1b13203f63bfe1f33da62a05a446a22022851@ec2-34-195-233-155.compute-1.amazonaws.com:5432/d84157ac50tjvp"
+# DATABASES['default'] = dj_database_url.config(default=DATABASE_URL)
 
 
 
