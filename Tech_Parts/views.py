@@ -369,8 +369,6 @@ def gammes(request):
     if not request.user.is_superuser:
         messages.error(request,"you dont have permission to add products")
         return redirect(reverse("home:home"))
-    if request.user.is_superuser:
-        return 
     gammes=Gammes.objects.all()
 
     context={"gammes":gammes}
