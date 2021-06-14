@@ -298,19 +298,16 @@ def confirm(request):
 @login_required
 def dashboard(request):  
     products=Product.objects.all().order_by("category")
-    if request.user.is_superuser:
-        print("hi")
-        # if request.method =="POST":
-            
-        #     messages.success(request,"Product added Successfully")
-        #     return redirect(reverse("home:home"))
-    else:
+    if not request.user.is_superuser:
         messages.error(request,"you dont have permission to add products")
         return redirect(reverse("home:home"))
     context={"products":products}
     return render(request,"dashboard/index.html",context)
 
 def add(request):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
     form =DashboardForm(request.POST or None ,request.FILES or None)
     if form.is_valid():
         form.save()
@@ -320,6 +317,9 @@ def add(request):
     return render(request,"dashboard/add.html",context)
        
 def edit(request,slug):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
     product=get_object_or_404(Product,slug=slug)
     form =DashboardForm(request.POST or None ,request.FILES or None,instance=product)
     if form.is_valid():
@@ -330,6 +330,9 @@ def edit(request,slug):
     return render(request,"dashboard/edit.html",context)
        
 def delete(request,slug):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
     product=get_object_or_404(Product,slug=slug)
     
     product.delete()
@@ -344,6 +347,9 @@ def profile(request):
     # return render(request,"dashboard/index.html")   
     
 def supplier(request):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
     form=SupplierForm(request.POST or None)
     if form.is_valid():
         form.save()
@@ -352,8 +358,33 @@ def supplier(request):
     context={"form":form}
    
     return render(request,"dashboard/supplier.html",context)   
-  
-      
+
+def gammes(request):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    if request.user.is_superuser:
+        return 
+    gammes=Gammes.objects.all()
+
+    context={"gammes":gammes}
+   
+    return render(request,"dashboard/gammes.html",context)   
+    
+def gammes_edit(request,slug):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    gamme=Gammes.objects.get(name=slug)
+    form=GammesForm(request.POST or None,instance=gamme)
+    if form.is_valid():
+        form.save()
+        messages.success(request,"Gamme changed successfully")
+        return redirect(reverse("home:gammes"))
+    context={"form":form}
+   
+    return render(request,"dashboard/gammes_edit.html",context)   
+        
 def team(request):      
 
     return render(request,"team.html")   

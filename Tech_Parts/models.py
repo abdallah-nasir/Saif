@@ -91,7 +91,7 @@ class Filters(models.Model):
     customer=models.ForeignKey(Customer,null=True,blank=True,on_delete=models.CASCADE)
     def __str__(self):
         return str(self.id)
-    
+      
 class Gammes(models.Model):
     name=models.CharField(max_length=50)
     gammer_high_end=models.PositiveIntegerField(default=0)

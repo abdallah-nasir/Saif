@@ -37,3 +37,9 @@ class SupplierForm(forms.ModelForm):
     class Meta:
         model=Supplier
         fields= "__all__"
+        
+class GammesForm(forms.ModelForm):
+    class Meta:
+        model=Gammes
+        fields= "__all__"  
+        exclude=["li"]     

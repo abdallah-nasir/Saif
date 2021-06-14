@@ -11,7 +11,7 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/logo/logo.jpg' %}" rel="icon">
   <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
@@ -27,30 +27,40 @@
   <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
 
   <!-- Template Main CSS File -->
+
   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
 
 </head>
 <style type="text/css">
+
   .icon-box .h3{
-  color:#ffc451 !important;
+  color:#fff !important;
   }
-  #btn_id{
+#btn_id{
+  margin-bottom:1cm;
     text-decoration: none !important;
-   
+    border: none !important;
+outline:none !important;
+cursor: pointer !important;
+background-color:#3b3b3b;
+  
+  }
+#btn_id:focus{
+outline:none !important;
+  
   }
 #cont{
-    margin-top:8rem !important;
-    margin-bottom:4rem !important;
+    margin-top:5rem;
+    margin-bottom:5rem;
     }
-#header{
-  background-color:#151515 !important;
-}
-ul {
-    list-style-type: none !important;
-}
-#click{
+    ul {
+      list-style-type: none !important;
+  }
 
-}
+.logo{
+font-size:larger !important;
+
+  }
 </style>
   <script type="text/javascript">
     function getCookie(name) {
@@ -93,22 +103,19 @@ ul {
       <nav class="nav-menu d-none d-lg-block">
         <ul>
           <li class="active"><a href="{% url 'home:home' %}">Home</a></li>
+         
           <li><a href="{% url 'home:team' %}">Services</a></li>
+         
           <li><a href="{% url 'home:team' %}">Team</a></li>
           <li><a href="{% url 'home:profile' %}">Profile</a></li>
 
           {% if request.user.is_superuser %}
           <li><a href="{% url 'home:dashboard' %}">Dashboard</a></li>
-      {% endif %}
+          {% endif %}
+
         </ul>
         </nav><!-- .nav-menu -->
-        {% if request.user.is_authenticated %}
-        <a href="{% url 'account_logout' %}" class="get-started-btn scrollto">Signout</a>
-            {% else %}
-         <a href="{% url 'account_login' %}" class="get-started-btn scrollto">Sign in</a>
-        <a href="{% url 'account_signup' %}" class="get-started-btn scrollto">Sign up</a>
       
-      {% endif %}
     </div>
   </header><!-- End Header -->
 
@@ -122,12 +129,12 @@ ul {
   <!-- ======= Footer ======= -->
   <footer id="footer">
     <div class="footer-top">
-      <div class="container">
+      <div  class="container">
         <div class="row">
 
           <div class="col-lg-3 col-md-6">
             <div class="footer-info">
-              <h3>Pc Puzzle<span>.</span></h3>
+              <h3>PC Puzzle<span>.</span></h3>
               <p>
                 Giza <br>
                 GZ 535022, Cairo<br><br>
@@ -208,6 +215,7 @@ ul {
 <script src="{% static 'assets/vendor/waypoints/jquery.waypoints.min.js' %}"></script>
 <script src="{% static 'assets/vendor/counterup/counterup.min.js' %}"></script>
 <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+
 
 <!-- Template Main JS File -->
 <script src="{%  static 'assets/js/main.js' %}"></script>

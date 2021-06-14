@@ -101,7 +101,8 @@ body {
 <div id="cont" class="container">
      <h2 class="card-title text-center">Sign In</h2>
     <div class="row pt-5 pb-5">
-        <div id="center" class="col col-lg-6 col-sm-12">
+               <div id="center" class="col col-lg-6 col-sm-12">
+                    <p>dont have an Account ?Then please <a href="{% url 'account_signup' %}"> signup</a></p>
             <form class="login" method="POST" action="{% url 'account_login' %}">
                 {{form|crispy}}
               {% csrf_token %}

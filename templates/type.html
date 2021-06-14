@@ -8,6 +8,9 @@
 width:10px !important;
 height:10px !important;
  } 
+.alert{
+  text-align: center !important;
+}
     </style>
 {% block content %}
 <section id="hero" class="d-flex align-items-center justify-content-center">
@@ -19,7 +22,9 @@ height:10px !important;
             {% for message in messages %}
             <li>
               <div role="alert" class="alert alert-success alert-dismissible">
-                <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>{{message}}
+                <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+             
+                {{message}}
               </div>
             </li>
         {% endfor %}
