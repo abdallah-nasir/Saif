@@ -5,13 +5,22 @@ from .models import *
 from .filters import *
 from .forms import *
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 import json
       
 
+
+
 def home(request):
+  
+   
+    # msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
+    # msg.attach_file('templates/index.html')
+    # msg.content_subtype = "html"  
+    # msg.send()        
     type=Type.objects.all().order_by("id")
     form=TypeFilter(request.POST or None)
     if form.is_valid():
@@ -224,6 +233,7 @@ def order_edit(request,slug):
 
 def result(request):  
     gammes=Gammes.objects.all() 
+    supplier=Supplier.objects.all()
     error=False
     if request.user.is_authenticated:
         order=Order.objects.filter(customer_id=request.user.id,ordered=True,delivered=False)
@@ -251,24 +261,20 @@ def result(request):
             return redirect(reverse("home:home"))            
 
         if request.method == "POST":  
-
-            supplier=Supplier.objects.all()[0]
+            supplier=Supplier.objects.all()
             edit_filter=Filters.objects.get(customer_id=request.user.id)
             edit_filter.type,edit_filter.processor, edit_filter.category = None,None,None
             edit_filter.save()  
+            context={"user":request.user,"orders":Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False),"suppliers":supplier}
+            msg_html = render_to_string("message.html",context)
+            msg = EmailMessage(subject="payment completed", body=msg_html, from_email=settings.EMAIL_HOST_USER, bcc=[request.user.email])
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
             my_order.delivered=True
-            my_order.save()      
-            send_mail(         
-                "Payment Completed",  
-                f"you have completed a Payment Transaction,\n your code : {my_order.code} \n supplier name : {supplier.name} \n supplier phone : {supplier.phone} \n location : {supplier.location} \n address: {supplier.address}",
-                settings.EMAIL_HOST_USER,
-            [request.user.email,],
-                fail_silently =False
-            )
+            my_order.save()     
             return redirect(reverse("home:confirm"))
-            # supllier=Supplier.objects.all()[0]
-               
-               
+
+ 
       
     else:   
         order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
@@ -284,7 +290,7 @@ def result(request):
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home"))
 
-    context={"orders":my_order,"filters":my_filter,"gammes":gammes,"error":error} 
+    context={"orders":my_order,"filters":my_filter,"suppliers":supplier,"gammes":gammes,"error":error} 
     return render(request,"result.html",context)  
 
     
@@ -389,3 +395,4 @@ def team(request):
 
     return render(request,"team.html")   
 
+          

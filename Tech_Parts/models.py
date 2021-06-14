@@ -110,7 +110,7 @@ import random
 
 class Order(models.Model):
     customer=models.ForeignKey(Customer,blank=True,null=True,on_delete=models.CASCADE)   
-    supplier=models.ForeignKey(Supplier,on_delete=models.CASCADE,default=1) 
+    # supplier=models.ForeignKey(Supplier,on_delete=models.CASCADE,default=1) 
     products=models.ManyToManyField(Product,blank=True)
     code=models.CharField(blank=True,null=True,max_length=100)
     ordered=models.BooleanField(default=False)

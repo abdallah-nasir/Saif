@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="descriptison">
+    <meta content="" name="keywords">
+  
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  
+  </head>
+
+    <body>
+<div class="container">
+    <div class="row">
+        <div class="col">
+           <h2>Hi {{user|title}}</h2> 
+         <p class="lead"> Thank You for Choosing Our Service
+            Here is your order Details</p> 
+            <table class="table table-striped table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Price</th>
+                       <th scope="col">Category</th>
+                    <th scope="col">Processor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for i in orders.products.all %}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{i.name}}</td>
+                    <td>{{i.price}}</td>
+                    <td>{{i.category.name}}</td>
+                    <td>{{i.processor.name}}</td>
+                  </tr>
+           {% endfor %}
+                </tbody>
+              </table>
+        </div>
+        <div class="row">
+            <h3>you can find your Products Here</h3>
+            <table class="table table-striped table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Supplier</th>
+                    <th scope="col">Phone</th>
+                       <th scope="col">address</th>
+                    <th scope="col">location</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for i in suppliers %}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{i.name}}</td>
+                    <td>{{i.phone}}</td>
+                    <td>{{i.address}}</td>
+                    <td><a href="{{i.location}}">Location</a></td>
+                  </tr>
+           {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+
+    </body>
+<!-- Vendor JS Files -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</html>
