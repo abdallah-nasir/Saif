@@ -11,12 +11,10 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 import json
       
-
+    
 
 
 def home(request):
-  
-   
     # msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
     # msg.attach_file('templates/index.html')
     # msg.content_subtype = "html"  
@@ -230,8 +228,9 @@ def order_edit(request,slug):
         for i in order:   
             i.products.remove(product)  
     return redirect(reverse("home:result"))
-
+  
 def result(request):  
+
     gammes=Gammes.objects.all() 
     supplier=Supplier.objects.all()
     error=False
@@ -240,6 +239,8 @@ def result(request):
         filter=Filters.objects.filter(customer_id=request.user.id) 
         if filter.exists():
             my_filter=Filters.objects.get(customer_id=request.user.id)
+            similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor=my_filter.processor)[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
+
         else:     
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home")) 
@@ -250,9 +251,11 @@ def result(request):
             for i in my_order.products.all():
                 if my_order.products.filter(name__icontains="ssd").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="cpu").exists() :
                     error=False   
-                elif my_order.products.filter(type__name="Normal"):
-                    error=False
-                else:  
+                elif my_order.products.filter(type__name="Normal").exists():
+                    error=True
+                    similar= Product.objects.filter(type=my_filter.type)[0:3] |Product.objects.filter(category=my_filter.category)[0:3] 
+
+                else:       
                     error=True          
                     # messages.error(request,"make sure you have full package Gpu,Cpu,Ram,Motherboard and SSD")   
       
@@ -281,19 +284,49 @@ def result(request):
         filter=Filters.objects.filter(device=request.COOKIES["device"])
         if filter.exists():
             my_filter=Filters.objects.get(device=request.COOKIES["device"])
+            similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor=my_filter.processor)[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
+
         else:
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home")) 
         if order.exists():
             my_order=Order.objects.get(device=request.COOKIES["device"],ordered=True,delivered=False)
+
         else:
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home"))
 
-    context={"orders":my_order,"filters":my_filter,"suppliers":supplier,"gammes":gammes,"error":error} 
+    context={"orders":my_order,"similar":similar,"filters":my_filter,"suppliers":supplier,"gammes":gammes,"error":error} 
     return render(request,"result.html",context)  
+ 
+def add_similar_product(request,id):
+    product=Product.objects.get(id=id)
+    if request.user.is_authenticated:
+        order=Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False)
+        order.products.add(product)
+        order.save()
+        messages.success(request,"Product added Successfully")
+    else:
+        order=Order.objects.get(device=request.COOKIES["device"],ordered=True,delivered=False)
+        order.products.add(product)
+        order.save()
+        messages.success(request,"Product added Successfully")
 
-    
+    return redirect(reverse("home:result"))
+        
+def remove_similar_product(request,id):
+    product=Product.objects.get(id=id)
+    if request.user.is_authenticated:
+        order=Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False)
+        order.products.remove(product)
+        messages.error(request,"Product removed Successfully")
+    else:
+        order=Order.objects.get(device=request.COOKIES["device"],ordered=True,delivered=False)
+        order.products.remove(product)
+        messages.error(request,"Product removed Successfully")
+
+    return redirect(reverse("home:result"))
+        
 def confirm(request):
     if not request.user.is_authenticated:
         return redirect(reverse("home:home"))
@@ -351,20 +384,6 @@ def profile(request):
     context={"order":order}
     return render(request,"dashboard/profile.html",context)  
     # return render(request,"dashboard/index.html")   
-    
-def supplier(request):
-    if not request.user.is_superuser:
-        messages.error(request,"you dont have permission to add products")
-        return redirect(reverse("home:home"))
-    form=SupplierForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request,"you added supplier")
-        return redirect(reverse("home:dashboard"))
-    context={"form":form}
-   
-    return render(request,"dashboard/supplier.html",context)   
-
 def gammes(request):
     if not request.user.is_superuser:
         messages.error(request,"you dont have permission to add products")
@@ -374,7 +393,43 @@ def gammes(request):
     context={"gammes":gammes}
    
     return render(request,"dashboard/gammes.html",context)   
+
+def supplier(request):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    supplier=Supplier.objects.all()
+
+    context={"supplier":supplier}
+   
+    return render(request,"dashboard/all-supplier.html",context)   
     
+# def add_supplier(request):
+#     if not request.user.is_superuser:
+#         messages.error(request,"you dont have permission to add products")
+#         return redirect(reverse("home:home"))
+#     form=SupplierForm(request.POST or None)
+#     if form.is_valid():
+#         form.save()
+#         messages.success(request,"you added supplier")
+#         return redirect(reverse("home:supplier"))
+#     context={"form":form}
+   
+#     return render(request,"dashboard/add-supplier.html",context)   
+
+def edit_supplier(request,id):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    supplier=Supplier.objects.get(id=id)
+    form =SupplierForm(request.POST or None,instance=supplier)
+    if form.is_valid():
+        form.save()
+        messages.success(request,"supplier added successfully")
+        return redirect(reverse("home:suppliers"))
+    context={"supplier":supplier,"form":form}
+   
+    return render(request,"dashboard/edit-supplier.html",context)   
 def gammes_edit(request,slug):
     if not request.user.is_superuser:
         messages.error(request,"you dont have permission to add products")
@@ -388,7 +443,7 @@ def gammes_edit(request,slug):
     context={"form":form}
    
     return render(request,"dashboard/gammes_edit.html",context)   
-        
+
 def team(request):      
 
     return render(request,"team.html")   

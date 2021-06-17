@@ -20,28 +20,13 @@ margin-top:10rem !important;
 <div class='row'>
  
 <div class="col">
-  {% if error %}
-
-  <ul class="messages">
-    
-    <li>
-      <div role="alert" class="alert alert-danger alert-dismissible">
-        <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-        make sure you have full package Gpu,Cpu,Ram,Motherboard and SSD
-      </div>
-    </li>
-
-
-</ul>
-
-  {%endif%}
   {% if messages %}
   <ul class="messages">
       {% for message in messages %}
       <li>
         <div role="alert" class="alert alert-{{message.tags}} alert-dismissible">
           <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-           {{ products.paginator.count }} {{message}}
+          {{message}}
         </div>
       </li>
 
@@ -125,11 +110,9 @@ margin-top:10rem !important;
  
    
     {% if request.user.is_authenticated %}
-    {% if error%}
-    <button class="btn btn-primary" type="submit" disabled>Checkout ${{orders.discount|floatformat:2}}</button>
-    {%else%}
-    <button class="btn btn-primary" type="submit" >Checkout ${{orders.discount|floatformat:2}}</button>
-{% endif %}
+      
+    <button class="btn btn-primary" type="submit" {% if orders.products.count == 0 %}disabled{% endif %}>Checkout ${{orders.discount|floatformat:2}}</button>
+
     {% endif %}
   </form>
   </div>
@@ -176,11 +159,12 @@ margin-top:10rem !important;
     <!-- ======= Counts Section ======= -->
 <div class="row">
    <div class="col">
-
+    
 <div class="counts" data-aos="fade-up">
+
       <div class="image col-xl-5 d-flex align-items-stretch justify-content-center justify-content-lg-start" data-aos="fade-right" data-aos-delay="100"></div>
-     
-       <div class="content d-flex flex-column justify-content-center">
+      {% if error == False %}
+      <div class="content d-flex flex-column justify-content-center">    
         {% if filters.type.name == "Gammer" %}
         <h3>Average FPS for {{filters.category.name}} </h3>
          <div class="row">
@@ -201,22 +185,7 @@ margin-top:10rem !important;
           {% endfor %}
     {% elif filters.type.name == "Engineer" or filters.type.name == "Designer" %} 
     <h3>Average Point for {{filters.category.name}} </h3>
-    <div class="row">
-      {% for i in gammes %}
-       <div class="col-md-6 d-md-flex align-items-md-stretch">
-         <div class="count-box">
-           <i class="{{i.li}}"></i>
-           {% if filters.category.name == "High-End" %}
-           <span data-toggle="counter-up">{{i.engineer_high_end}}</span><span>FPS</span>
-           {% elif filters.category.name == "Medium" %}
-           <span data-toggle="counter-up">{{i.engineer_medium}}</span><span>FPS</span>
-           {% else %}
-           <span data-toggle="counter-up">{{i.engineer_low_end}}</span><span>FPS</span>
-           {% endif %}
-           <p><strong>{{i.name}}</strong></p>
-         </div>
-       </div>
-{% endfor %}  
+    <div class="row"></div>
 
 {% elif filters.type.name == "Programmer" %} 
 <h3>Average Core for {{filters.category.name}} </h3>
@@ -241,9 +210,39 @@ margin-top:10rem !important;
 
 </div>   
   </div>
+
+
+{% else %}
+
+<h2 style="text-align:center; margin-top:2rem;">Similar Products</h2>
+<div class="row mb-5 mt-5">
+  {% if orders.products.count != 0 %}
+  {% for i in similar|slice:"0:3" %}
+  <div class="col col-xs-6 col-sm-6 col-lg-4">
+
+  
+    <div class="card"  style="width: auto;">
+      <img src="{{i.image}}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title"></h5>
+        <p class="card-text">{{i.name}}</p>
+        <a href="{% url 'home:add-similar' id=i.id %}" class="btn btn-primary {% if i in orders.products.all %}disabled{% endif %}">Add to Card</a>
+       
+          <a href="{% url 'home:remove-similar' id=i.id %}" class="btn btn-danger  {% if not i in orders.products.all %}disabled{% endif %}">Remove From Card</a>
+
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
+{% endif %}
+
+
 </div>
 
    </div>
+  
  </div> 
 </div>
 

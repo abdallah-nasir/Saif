@@ -31,7 +31,7 @@ class Category(models.Model):
     
 class Processor(models.Model):
     name=models.CharField(max_length=50)
-    image=models.ImageField()
+    image=models.CharField(max_length=3000)
     def __str__(self):
         return self.name    
 
@@ -52,7 +52,7 @@ class Customer(models.Model):
     
 class Supplier(models.Model): 
     name=models.CharField(max_length=50)
-    image=models.ImageField()
+    image=models.CharField(max_length=3000)
     phone=models.CharField(max_length=11)
     # email=models.EmailField(max_length=100)
     address=models.CharField(max_length=120)
@@ -62,7 +62,7 @@ class Supplier(models.Model):
     
 class Product(models.Model):
     name=models.CharField(max_length=100)
-    image=models.ImageField(blank=True,null=True)
+    image=models.CharField(max_length=3000)
     price=models.PositiveIntegerField(default=0)
     category=models.ForeignKey(Category,null=True,blank=True,on_delete=models.SET_NULL)
     processor=models.ForeignKey(Processor,null=True,blank=True,on_delete=models.SET_NULL)

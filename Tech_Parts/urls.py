@@ -10,6 +10,13 @@ urlpatterns = [
     path("category/processor/",views.processor,name="processor"),
     path("category/processor/product/",views.product,name="product"),
     path("result/",views.result,name="result"),
+    path("suppliers/",views.supplier,name="suppliers"),
+    path("suppliers/<str:id>/",views.edit_supplier,name="edit_supplier"),
+    # path("dashboard/supplier/",views.add_supplier,name="add_supplier"),
+
+    path("add-similar/<str:id>/",views.add_similar_product,name="add-similar"),
+    path("remove-similar/<str:id>/",views.remove_similar_product,name="remove-similar"),
+   
     path("order/edit/<slug:slug>/",views.order_edit,name="order_edit"),    
 
     path("confirm/",views.confirm,name="confirm"),
@@ -20,10 +27,10 @@ urlpatterns = [
     path("dashboard/delete/<str:slug>/",views.delete,name="delete"),
     path("gammes/",views.gammes,name="gammes"),
     path("gammes/<str:slug>/edit/",views.gammes_edit,name="gammes_edit"),
+
     path("profile/",views.profile,name="profile"),
     path("team/",views.team,name="team"),
 
-    path("dashboard/supplier/",views.supplier,name="supplier"),
      
 ]
      

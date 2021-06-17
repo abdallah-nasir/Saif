@@ -25,13 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-575rbk*tw5=*4gqq$-lj3hz!2#u)n=-(f(0^r6w-vl0c7t0ll+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True  
 
-ALLOWED_HOSTS = ["pc-puzzle.herokuapp.com","localhost","127.0.0.1"]
+
+ALLOWED_HOSTS = ["localhost","127.0.0.1","pc-puzzle.herokuapp.com"]
 
 
 # Application definition  
-
+   
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.sites',
@@ -89,7 +90,14 @@ WSGI_APPLICATION = 'E_Tech.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+import os
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     } 
+# } 
 DATABASES = {
 
     'default': {
