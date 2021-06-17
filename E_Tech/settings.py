@@ -25,19 +25,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-575rbk*tw5=*4gqq$-lj3hz!2#u)n=-(f(0^r6w-vl0c7t0ll+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["pc-puzzle.herokuapp.com","localhost","127.0.0.1"]
 
 
-# Application definition
+# Application definition  
 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.sites',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'django.contrib.sessions',   
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #myapps
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django_filters',
     'tinymce',
     #my lib
-    'allauth',
+    'allauth',   
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
