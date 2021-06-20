@@ -125,14 +125,18 @@ class Order(models.Model):
             price += i.price
             
         return price
-    
+
     def discount(self):
         percentage=(10/100)*self.total_price()
         return percentage
             # disc=0
             # for i in self.products.all():
             #     price +=i.    
-              
+            
+    def after_price(self):
+        price= self.total_price() - self.discount()
+        return price
+    
     def save(self, *args, **kwargs): # new
         if not self.code: 
             num=random.random()

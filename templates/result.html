@@ -122,6 +122,17 @@ margin-top:10rem !important;
       {% endif %}
       </tr>
 
+      <tr class="total">
+        {% if request.user.is_authenticated %}
+     
+          <td>Total Price</td>
+          <td></td>
+          <td></td>
+   
+       <td>${{orders.after_price|floatformat:2}}</td>
+     
+         {% endif %}
+         </tr>
   
     </table>
  

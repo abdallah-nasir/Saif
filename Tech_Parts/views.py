@@ -273,7 +273,7 @@ def result(request):
                 else:       
                     error=True          
                     # messages.error(request,"make sure you have full package Gpu,Cpu,Ram,Motherboard and SSD")   
-      
+        
         else:
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home"))            
@@ -281,8 +281,9 @@ def result(request):
         if request.method == "POST":  
             supplier=Supplier.objects.all()
             edit_filter=Filters.objects.get(customer_id=request.user.id)
-            edit_filter.type,edit_filter.processor, edit_filter.category = None,None,None
-            edit_filter.save()  
+            edit_filter.type, edit_filter.category = None,None
+            edit_filter.save()     
+            edit_filter.processor.remove()
             context={"user":request.user,"orders":Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False),"suppliers":supplier}
             msg_html = render_to_string("message.html",context)
             msg = EmailMessage(subject="payment completed", body=msg_html, from_email=settings.EMAIL_HOST_USER, bcc=[request.user.email])
