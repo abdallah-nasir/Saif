@@ -147,7 +147,7 @@ def product(request):
             else:               
                 # for i in filter.processor.all():    
                 #     proc=i.name         
-                product=Product.objects.filter(category=filter.category,type=filter.type,processor__in=filter.processor.all()).distinct()
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all()).distinct()
 
             paginator = Paginator(product,4) # Show 6 contacts per page.
 
@@ -166,7 +166,7 @@ def product(request):
             if my_filter.type.name == "Normal":  
                 product=Product.objects.filter(type=my_filter.type)   
             else:  
-                product=Product.objects.filter(category=my_filter.category,type=my_filter.type,processor__in=my_filter.processor.all()).distinct()
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all()).distinct()
             paginator = Paginator(product,4) # Show 25 contacts per page.
 
             page_number = request.GET.get('page')
