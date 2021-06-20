@@ -12,7 +12,7 @@ urlpatterns = [
     path("result/",views.result,name="result"),
     path("suppliers/",views.supplier,name="suppliers"),
     path("suppliers/<str:id>/",views.edit_supplier,name="edit_supplier"),
-    # path("dashboard/supplier/",views.add_supplier,name="add_supplier"),
+    path("dashboard/supplier/",views.add_supplier,name="add_supplier"),
 
     path("add-similar/<str:id>/",views.add_similar_product,name="add-similar"),
     path("remove-similar/<str:id>/",views.remove_similar_product,name="remove-similar"),
@@ -25,8 +25,10 @@ urlpatterns = [
     path("dashboard/add/",views.add,name="add"),
     path("dashboard/edit/<str:slug>/",views.edit,name="edit"),
     path("dashboard/delete/<str:slug>/",views.delete,name="delete"),
-    path("gammes/",views.gammes,name="gammes"),
-    path("gammes/<str:slug>/edit/",views.gammes_edit,name="gammes_edit"),
+    path("games/",views.gammes,name="gammes"),
+    path("games/<str:slug>/edit/",views.gammes_edit,name="gammes_edit"),
+    path("fps/",views.fps,name="fps"),
+    path("fps/<str:id>/",views.fps_edit,name="fps_edit"),
 
     path("profile/",views.profile,name="profile"),
     path("team/",views.team,name="team"),

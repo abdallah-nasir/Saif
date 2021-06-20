@@ -64,9 +64,10 @@ class Product(models.Model):
     name=models.CharField(max_length=100)
     image=models.CharField(max_length=3000)
     price=models.PositiveIntegerField(default=0)
-    category=models.ForeignKey(Category,null=True,blank=True,on_delete=models.SET_NULL)
-    processor=models.ForeignKey(Processor,null=True,blank=True,on_delete=models.SET_NULL)
+    category=models.ForeignKey(Category,default=1,null=True,on_delete=models.SET_NULL)
+    processor=models.ManyToManyField(Processor)
     type=models.ForeignKey(Type,default=6,null=True,on_delete=models.SET_NULL)
+    
     details=HTMLField()
     code=models.CharField(max_length=100,blank=True)
     slug=models.SlugField(blank=True,max_length=100,unique=True)
@@ -80,34 +81,33 @@ class Product(models.Model):
     def save(self, *args, **kwargs): # new
         if not self.slug:
             self.slug = slugify(self.name)
-        if not self.code:
-            self.code = self.name
         return super().save(*args, **kwargs)
 class Filters(models.Model):
     type=models.ForeignKey(Type,blank=True,null=True,on_delete=models.CASCADE)
-    processor=models.ForeignKey(Processor,blank=True,null=True,on_delete=models.CASCADE)
+    processor=models.ManyToManyField(Processor,blank=True)
     category=models.ForeignKey(Category,blank=True,null=True,on_delete=models.CASCADE)
     device=models.CharField(max_length=120,blank=True,null=True)
     customer=models.ForeignKey(Customer,null=True,blank=True,on_delete=models.CASCADE)
     def __str__(self):
         return str(self.id)
       
-class Gammes(models.Model):
+class Games(models.Model):
     name=models.CharField(max_length=50)
-    gammer_high_end=models.PositiveIntegerField(default=0)
-    gammer_medium=models.PositiveIntegerField(default=0)
-    gammer_low_end=models.PositiveIntegerField(default=0)
-    engineer_high_end=models.PositiveIntegerField(default=0)
-    engineer_medium=models.PositiveIntegerField(default=0)
-    engineer_low_end=models.PositiveIntegerField(default=0)
-    programmer_high_end=models.PositiveIntegerField(default=0)
-    programmer_mediuum=models.PositiveIntegerField(default=0)
-    programmer_low_end=models.PositiveIntegerField(default=0)
+    gamer_high_end=models.PositiveIntegerField(default=0)
+    gamer_medium=models.PositiveIntegerField(default=0)
+    gamer_low_end=models.PositiveIntegerField(default=0)
     li=models.CharField(max_length=100)
     def __str__(self):
         return self.name
 import random
 
+    
+class Fps_Numbers(models.Model):
+    name=models.CharField(max_length=100)
+    details=models.CharField(max_length=50)
+    value=models.PositiveIntegerField(default=0)
+    def __str__(self):
+        return self.name
 class Order(models.Model):
     customer=models.ForeignKey(Customer,blank=True,null=True,on_delete=models.CASCADE)   
     # supplier=models.ForeignKey(Supplier,on_delete=models.CASCADE,default=1) 

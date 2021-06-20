@@ -40,6 +40,11 @@ class SupplierForm(forms.ModelForm):
         
 class GammesForm(forms.ModelForm):
     class Meta:
-        model=Gammes
+        model=Games
         fields= "__all__"  
         exclude=["li"]     
+class FpsForm(forms.ModelForm):
+    class Meta:
+        model=Fps_Numbers
+        fields= "__all__"  
+             

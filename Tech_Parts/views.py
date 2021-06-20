@@ -100,27 +100,30 @@ def category(request):
     return render(request,"gaming1.html",context)
 
 def processor(request):
-    processor=Processor.objects.all()
-    form=ProcessorFilter(request.POST or None)
-    if form.is_valid():
+    processor=Processor.objects.all()       
+    form=ProcessorFilter(request.POST or None) 
+    if form.is_valid():                        
         if request.user.is_authenticated:
             if Filters.objects.filter(customer_id=request.user.id).exists():
                 my_filter=Filters.objects.get(customer_id=request.user.id)
-               
-                my_filter.processor=form.cleaned_data.get("processor")
-                my_filter.save()
+                for i in Filters.objects.filter(customer_id=request.user.id):
+              
+                    i.processor.set(request.POST.get("processor"))
+                    i.save()   
                 messages.success(request,"Products mathches with your choice")
                 return redirect(reverse("home:product"))
-
-            else:    
+    
+            else:  
                 Filters.objects.create(customer_id=request.user.id,processor=form.cleaned_data.get("processor"))
                 messages.success(request,"Products mathches with your choice")
                 return redirect(reverse("home:product"))
         else: 
             if Filters.objects.filter(device=request.COOKIES["device"]).exists():
                 my_filter=Filters.objects.get(device=request.COOKIES["device"])
-                my_filter.processor=form.cleaned_data.get("processor")
-                my_filter.save()
+                for i in Filters.objects.filter(device=request.COOKIES["device"]):
+              
+                    i.processor.set(request.POST.get("processor"))
+                    i.save()   
                 messages.success(request,"Products mathches with your choice")
                 return redirect(reverse("home:product"))
             else:    
@@ -130,31 +133,41 @@ def processor(request):
     context={"processor":processor}
     return render(request,"type.html",context)
 from django.core.paginator import Paginator
-def product(request):  
+def product(request):         
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
     if request.user.is_authenticated:
         if Filters.objects.filter(customer_id=request.user.id).exists():
             filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
             if filter.type.name == "Normal":
                 product=Product.objects.filter(type=filter.type)
-            else:
-                product=Product.objects.filter(category=filter.category,processor=filter.processor) | Product.objects.all()[0:11]
-            paginator = Paginator(product,6) # Show 6 contacts per page.
+            else:               
+                # for i in filter.processor.all():    
+                #     proc=i.name         
+                product=Product.objects.filter(category=filter.category,type=filter.type,processor__in=filter.processor.all()).distinct()
 
-            page_number = request.GET.get('page')
+            paginator = Paginator(product,4) # Show 6 contacts per page.
+
+            page_number = request.GET.get('page')   
             page_obj = paginator.get_page(page_number)
             # product=Product.objects.all()[0:10]   
-        else:
-            messages.error(request,"you dont have order yet")   
-            return redirect(reverse("home:home"))
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
     else:   
         filter=Filters.objects.filter(device=request.COOKIES["device"])
         if filter.exists():
-            my_filter=Filters.objects.get(device=request.COOKIES["device"])
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
             if my_filter.type.name == "Normal":  
-                product=Product.objects.filter(type=my_filter.type)
+                product=Product.objects.filter(type=my_filter.type)   
             else:  
-                product=Product.objects.filter(category=my_filter.category,processor=my_filter.processor) | Product.objects.all()[0:11]
-            paginator = Paginator(product,6) # Show 25 contacts per page.
+                product=Product.objects.filter(category=my_filter.category,type=my_filter.type,processor__in=my_filter.processor.all()).distinct()
+            paginator = Paginator(product,4) # Show 25 contacts per page.
 
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)        
@@ -171,18 +184,20 @@ def product(request):
                 if order.exists():
                     my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
                     b=request.POST.getlist("products")
-                    for i in order:  
-                        for d in b:
-                            i.products.add(d)
-                            i.save()
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
                            
-                    return redirect(reverse("home:result"))
+                    # return redirect(reverse("home:result"))
                 else:
                     Order.objects.create(customer=customer,ordered=True,delivered=False)
                     for i in order:   
                         i.products.set(form.cleaned_data.get("products"))
                         i.save()
-                    return redirect(reverse("home:result")) 
+                    # return redirect(reverse("home:result")) 
             else: 
                 messages.error(request,"you dont have order yet")
                 return redirect(reverse("home:home"))
@@ -196,22 +211,21 @@ def product(request):
                     # print(form.cleaned_data.get("products"))
                     b=request.POST.getlist("products")
                     for i in order:  
-                        for d in b:
-                            i.products.add(d)
-                            i.save()
-                           
-                    return redirect(reverse("home:result"))
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
                 else:    
                     Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
                     for i in order:
                         i.products.set(form.cleaned_data.get("products"))
                         i.save()
-                    return redirect(reverse("home:result"))
+                    # return redirect(reverse("home:result"))
                   
             else:
                 messages.error(request,"you dont have order yet")
                 return redirect(reverse("hme:home"))
-    context={"products":page_obj}   
+    context={"products":page_obj,"orders":my_order,"static":static}   
     return render(request,"products.html",context)
       
 def order_edit(request,slug):
@@ -230,8 +244,9 @@ def order_edit(request,slug):
     return redirect(reverse("home:result"))
   
 def result(request):  
-
-    gammes=Gammes.objects.all() 
+    gammes=Games.objects.all() 
+    eng=Fps_Numbers.objects.filter(name__icontains="Engineer")
+    prog=Fps_Numbers.objects.filter(name__icontains="Programmer")
     supplier=Supplier.objects.all()
     error=False
     if request.user.is_authenticated:
@@ -239,7 +254,7 @@ def result(request):
         filter=Filters.objects.filter(customer_id=request.user.id) 
         if filter.exists():
             my_filter=Filters.objects.get(customer_id=request.user.id)
-            similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor=my_filter.processor)[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
+            similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor__in=my_filter.processor.all()).distinct()[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
 
         else:     
             messages.error(request,"you don't have order yet")
@@ -279,24 +294,31 @@ def result(request):
 
  
       
-    else:   
+    else:       
         order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
         filter=Filters.objects.filter(device=request.COOKIES["device"])
         if filter.exists():
             my_filter=Filters.objects.get(device=request.COOKIES["device"])
-            similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor=my_filter.processor)[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
-
-        else:
-            messages.error(request,"you don't have order yet")
-            return redirect(reverse("home:home")) 
         if order.exists():
             my_order=Order.objects.get(device=request.COOKIES["device"],ordered=True,delivered=False)
+            similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor__in=my_filter.processor.all()).distinct()[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
 
-        else:
+            if my_order.products.count() < 1:
+                error=True                       
+            for i in my_order.products.all():
+                if my_order.products.filter(name__icontains="ssd").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="cpu").exists() :
+                    error=False   
+                elif my_order.products.filter(type__name="Normal").exists():
+                    error=True
+                    similar= Product.objects.filter(type=my_filter.type)[0:3] |Product.objects.filter(category=my_filter.category)[0:3] 
+
+                else:       
+                    error=True 
+        else:      
             messages.error(request,"you don't have order yet")
-            return redirect(reverse("home:home"))
+            return redirect(reverse("home:home"))  
 
-    context={"orders":my_order,"similar":similar,"filters":my_filter,"suppliers":supplier,"gammes":gammes,"error":error} 
+    context={"prog":prog,"eng":eng,"orders":my_order,"similar":similar,"filters":my_filter,"suppliers":supplier,"gammes":gammes,"error":error} 
     return render(request,"result.html",context)  
  
 def add_similar_product(request,id):
@@ -326,7 +348,7 @@ def remove_similar_product(request,id):
         messages.error(request,"Product removed Successfully")
 
     return redirect(reverse("home:result"))
-        
+
 def confirm(request):
     if not request.user.is_authenticated:
         return redirect(reverse("home:home"))
@@ -388,11 +410,37 @@ def gammes(request):
     if not request.user.is_superuser:
         messages.error(request,"you dont have permission to add products")
         return redirect(reverse("home:home"))
-    gammes=Gammes.objects.all()
+    gammes=Games.objects.all()
 
     context={"gammes":gammes}
    
     return render(request,"dashboard/gammes.html",context)   
+
+
+def fps(request):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    fps=Fps_Numbers.objects.all()
+
+    context={"fps":fps}
+   
+    return render(request,"dashboard/fps.html",context)   
+
+def fps_edit(request,id):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    fps=Fps_Numbers.objects.get(id=id)
+    form=FpsForm(request.POST or None,instance=fps)
+    if form.is_valid():
+        form.save()
+        messages.success(request,"Fps changed successfully")
+        return redirect(reverse("home:fps"))
+    context={"form":form}
+   
+    return render(request,"dashboard/gammes_edit.html",context)   
+
 
 def supplier(request):
     if not request.user.is_superuser:
@@ -404,18 +452,18 @@ def supplier(request):
    
     return render(request,"dashboard/all-supplier.html",context)   
     
-# def add_supplier(request):
-#     if not request.user.is_superuser:
-#         messages.error(request,"you dont have permission to add products")
-#         return redirect(reverse("home:home"))
-#     form=SupplierForm(request.POST or None)
-#     if form.is_valid():
-#         form.save()
-#         messages.success(request,"you added supplier")
-#         return redirect(reverse("home:supplier"))
-#     context={"form":form}
+def add_supplier(request):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    form=SupplierForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request,"you added supplier")
+        return redirect(reverse("home:suppliers"))
+    context={"form":form}
    
-#     return render(request,"dashboard/add-supplier.html",context)   
+    return render(request,"dashboard/add-supplier.html",context)   
 
 def edit_supplier(request,id):
     if not request.user.is_superuser:
@@ -434,7 +482,7 @@ def gammes_edit(request,slug):
     if not request.user.is_superuser:
         messages.error(request,"you dont have permission to add products")
         return redirect(reverse("home:home"))
-    gamme=Gammes.objects.get(name=slug)
+    gamme=Games.objects.get(name=slug)
     form=GammesForm(request.POST or None,instance=gamme)
     if form.is_valid():
         form.save()

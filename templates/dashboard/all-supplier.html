@@ -58,7 +58,11 @@
                             </a>
                             <a class="nav-link" href="{% url 'home:gammes' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                               Gammes
+                               Games
+                            </a>
+                              <a class="nav-link" href="{% url 'home:fps' %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                               Fps
                             </a>
                         </div>
                     </div>
@@ -98,7 +102,10 @@
                                   <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Name</th>
-                                  
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Add Supplier</th>
+
                                   
                                     <th scope="col">Edit</th>
                                    
@@ -109,10 +116,15 @@
                                   <tr>
                                     <th scope="row">{{forloop.counter}}</th>
                                     <td>{{i.name}}</td>
-                                   
+                                    <td>{{i.phone}}</td>
+                                    <td>{{i.address}}</td>
+                                       <td> <a href="{% url 'home:add_supplier'  %}" type="button" class="btn btn-success">
+                                       Add Supplier
+                                       </a></td>
                                     <td> <a href="{% url 'home:edit_supplier' id=i.id %}" type="button" class="btn btn-primary">
                                        edit
                                        </a></td>
+                                      
                                     
                                   </tr>
 

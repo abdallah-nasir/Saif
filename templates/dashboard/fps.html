@@ -56,11 +56,11 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Suppliers
                             </a>
-                             <a class="nav-link" href="{% url 'home:gammes' %}">
+                            <a class="nav-link" href="{% url 'home:gammes' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                Games
                             </a>
-                            <a class="nav-link" href="{% url 'home:fps' %}">
+                              <a class="nav-link" href="{% url 'home:fps' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                Fps
                             </a>
@@ -75,7 +75,7 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
+                        <h1 class="mt-4">Gammes</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
@@ -101,50 +101,29 @@
                                 <thead>
                                   <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">product</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Type</th>
+                                    <th scope="col">Name</th>
+                                  
+                                    <th scope="col">Details</th>
+                                    <th scope="col">Value</th>
+
                                     <th scope="col">Edit</th>
-                                    <th scope="col">Delete</th>
+                                   
                                   </tr>
                                 </thead>
                                 <tbody>
-                                    {% for i in products %}
+                                    {% for i in fps %}
                                   <tr>
                                     <th scope="row">{{forloop.counter}}</th>
                                     <td>{{i.name}}</td>
-                                    <td>{{i.category.name}}</td>
-                                    <td>{{i.type.name}}</td>
-                                    <td> <a href="{% url 'home:edit' slug=i.slug %}" type="button" class="btn btn-primary">
+                                    <td>{{i.details}}</td>
+                                    <td>{{i.value}}</td>
+
+                                    <td> <a href="{% url 'home:fps_edit' id=i.id %}" type="button" class="btn btn-primary">
                                        edit
                                        </a></td>
-                                    <td><!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal-{{i.id}}">
-                                         delete
-                                        </button>
-                                        </td>
+                                    
                                   </tr>
 
-                                  <!-- Modal delete -->
-  <div class="modal fade" id="exampleModal-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        are you sure you want delete product {{i.id}}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <a href="{% url 'home:delete' slug=i.slug %}" type="submit" class="btn btn-danger">Delete</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-                              <!-- Modal delete-->
 
 
                             <!-- Modal -->

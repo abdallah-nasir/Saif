@@ -48,10 +48,10 @@ margin-top:10rem !important;
       </tr>
 
       <tr class="details">
-        <td>Check</td>
+       
         <td></td>
         <td></td>
-        <td>{{orders.total_price}}</td>
+      
       </tr>
 
       <tr class="heading">
@@ -76,8 +76,10 @@ margin-top:10rem !important;
      
 {% endfor %}
 <tr class='item total'>
- 
+  
   <td class="total">Discount</td>
+  
+  
    {% if request.user.is_anonymous %}
    <td></td>
    <td></td>
@@ -89,16 +91,31 @@ margin-top:10rem !important;
   {% endif %}
  
 </tr>
+<tr class='item total'>
+  {% if request.user.is_authenticated %}
+  <td class="total">Before Discount</td>
+  
+   <td></td>
+  
 
+  
+   <td></td>
+   
+   <td>${{orders.total_price|floatformat:2}}</td>
+{% endif %}
+</tr>
    <tr class="total">
      {% if request.user.is_authenticated %}
+  
        <td>After Discount</td>
        <td></td>
        <td></td>
+
     <td>${{orders.discount|floatformat:2}}</td>
+  
     {% else %}
   
-    <td>Price</td>
+    <td>Total Price</td>
     <td></td>
     <td></td>
       <td>${{orders.total_price|floatformat:2}}</td>
@@ -119,7 +136,7 @@ margin-top:10rem !important;
   
 </div>
 </div>
-{% if filters.type.name == "Gammer" %}
+{% if filters.type.name == "Gamer" %}
  <div class="row">
    <div class="col">
     <h2> Example</h2>  
@@ -165,7 +182,7 @@ margin-top:10rem !important;
       <div class="image col-xl-5 d-flex align-items-stretch justify-content-center justify-content-lg-start" data-aos="fade-right" data-aos-delay="100"></div>
       {% if error == False %}
       <div class="content d-flex flex-column justify-content-center">    
-        {% if filters.type.name == "Gammer" %}
+        {% if filters.type.name == "Gamer" %}
         <h3>Average FPS for {{filters.category.name}} </h3>
          <div class="row">
            {% for i in gammes %}
@@ -173,11 +190,11 @@ margin-top:10rem !important;
               <div class="count-box">
                 <i class="{{i.li}}"></i>
                 {% if filters.category.name == "High-End" %}
-                <span data-toggle="counter-up">{{i.gammer_high_end}}</span><span>FPS</span>
+                <span data-toggle="counter-up">{{i.gamer_high_end}}</span><span>FPS</span>
                 {% elif filters.category.name == "Medium" %}
-                <span data-toggle="counter-up">{{i.gammer_medium}}</span><span>FPS</span>
+                <span data-toggle="counter-up">{{i.gamer_medium}}</span><span>FPS</span>
                 {% else %}
-                <span data-toggle="counter-up">{{i.gammer_low_end}}</span><span>FPS</span>
+                <span data-toggle="counter-up">{{i.gamer_low_end}}</span><span>FPS</span>
                 {% endif %}
                 <p><strong>{{i.name}}</strong></p>
               </div>
@@ -185,23 +202,27 @@ margin-top:10rem !important;
           {% endfor %}
     {% elif filters.type.name == "Engineer" or filters.type.name == "Designer" %} 
     <h3>Average Point for {{filters.category.name}} </h3>
-    <div class="row"></div>
+    <div class="row">
+    {% for i in eng %}
+      <div class="col-md-6 d-md-flex align-items-md-stretch">
+        <div class="count-box">
+          <span data-toggle="counter-up">{{i.value}}</span><span>{{i.details}}</span>
+    </div>
+      </div>
+{% endfor %}
+    </div>
 
 {% elif filters.type.name == "Programmer" %} 
 <h3>Average Core for {{filters.category.name}} </h3>
 <div class="row">
-  {% for i in gammes %}
+  {% for i in prog %}
    <div class="col-md-6 d-md-flex align-items-md-stretch">
      <div class="count-box">
-       <i class="{{i.li}}"></i>
-       {% if filters.category.name == "High-End" %}
-       <span data-toggle="counter-up">{{i.programmer_high_end}}</span><span>FPS</span>
-       {% elif filters.category.name == "Medium" %}
-       <span data-toggle="counter-up">{{i.programmer_medium}}</span><span>FPS</span>
-       {% else %}
-       <span data-toggle="counter-up">{{i.programmer_low_end}}</span><span>FPS</span>
-       {% endif %}
-       <p><strong>{{i.name}}</strong></p>
+     
+       
+       <span data-toggle="counter-up">{{i.value}}</span><span>{{i.details}}</span>
+
+     
      </div>
    </div>
 {% endfor %}  
@@ -219,7 +240,6 @@ margin-top:10rem !important;
   {% if orders.products.count != 0 %}
   {% for i in similar|slice:"0:3" %}
   <div class="col col-xs-6 col-sm-6 col-lg-4">
-
   
     <div class="card"  style="width: auto;">
       <img src="{{i.image}}" class="card-img-top" alt="...">
