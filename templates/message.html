@@ -41,7 +41,13 @@
                     <td>{{i.name}}</td>
                     <td>{{i.price}}</td>
                     <td>{{i.category.name}}</td>
+                     
+                      {% if i.processor.count != 1 %}
+                      <td>Intel-Amd</td>
+{% else %}
                     <td>{{i.processor.name}}</td>
+                    {% endif %}
+                    
                   </tr>
            {% endfor %}
                 </tbody>

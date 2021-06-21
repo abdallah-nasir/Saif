@@ -282,8 +282,10 @@ def result(request):
             supplier=Supplier.objects.all()
             edit_filter=Filters.objects.get(customer_id=request.user.id)
             edit_filter.type, edit_filter.category = None,None
+            edit_filter.processor.clear()
             edit_filter.save()     
-            edit_filter.processor.remove()
+            
+            
             context={"user":request.user,"orders":Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False),"suppliers":supplier}
             msg_html = render_to_string("message.html",context)
             msg = EmailMessage(subject="payment completed", body=msg_html, from_email=settings.EMAIL_HOST_USER, bcc=[request.user.email])
