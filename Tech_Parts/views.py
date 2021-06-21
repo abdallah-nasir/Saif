@@ -426,7 +426,7 @@ def fps(request):
     if not request.user.is_superuser:
         messages.error(request,"you dont have permission to add products")
         return redirect(reverse("home:home"))
-    fps=Fps_Numbers.objects.all()
+    fps=Fps_Numbers.objects.all().order_by("name")
 
     context={"fps":fps}
    
