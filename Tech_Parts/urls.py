@@ -28,6 +28,8 @@ urlpatterns = [
     path("games/",views.gammes,name="gammes"),
     path("games/<str:slug>/edit/",views.gammes_edit,name="gammes_edit"),
     path("fps/",views.fps,name="fps"),
+    path("fps/add/",views.fps_add,name="fps_add"),
+
     path("fps/<str:id>/",views.fps_edit,name="fps_edit"),
 
     path("profile/",views.profile,name="profile"),

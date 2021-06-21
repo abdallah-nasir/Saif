@@ -430,7 +430,20 @@ def fps(request):
 
     context={"fps":fps}
    
-    return render(request,"dashboard/fps.html",context)   
+    return render(request,"dashboard/fps.html",context) 
+  
+def fps_add(request):
+    if not request.user.is_superuser:
+        messages.error(request,"you dont have permission to add products")
+        return redirect(reverse("home:home"))
+    form=FpsForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request,"Fps Added successfully")
+        return redirect(reverse("home:fps"))
+    context={"form":form}
+   
+    return render(request,"dashboard/gammes_edit.html",context) 
 
 def fps_edit(request,id):
     if not request.user.is_superuser:

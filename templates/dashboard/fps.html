@@ -95,8 +95,14 @@
                             </ul>
                             {% endif %}
                           </div>
+                          <div class="row mb-2">
+                            <a href="{% url 'home:fps_add'  %}" type="button" class="btn btn-danger">
+                               <h2>Add</h2> 
+                                </a>
+                        </div>
                         <div >
-                          
+                     
+                           
                             <table class="table table-striped table-dark" >
                                 <thead>
                                   <tr>
@@ -108,7 +114,7 @@
                                     <th scope="col">Value</th>
 
                                     <th scope="col">Edit</th>
-                                   
+
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -124,6 +130,8 @@
                                     <td> <a href="{% url 'home:fps_edit' id=i.id %}" type="button" class="btn btn-primary">
                                        edit
                                        </a></td>
+
+                                      
                                     
                                   </tr>
 
