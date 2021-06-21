@@ -74,7 +74,7 @@ margin-top:4.5rem;
             <h5 class="card-title">{{i.name}}</h5>
           </div>
           {% if request.user.is_authenticated %}
-          <div ><span>after discount </span><span>{{i.discount}} EGP </span></div>
+          <div ><span>after discount </span><span>{{i.total_price}} EGP </span></div>
           <div ><span>before discount </span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span> {{i.price}} EGP</small></div>
           {% else %}
           <div ><span>price </span><span>{{i.price}} EGP </span></div>

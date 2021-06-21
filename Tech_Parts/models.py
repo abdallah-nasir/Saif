@@ -78,6 +78,9 @@ class Product(models.Model):
     def discount(self):
         price=(10/100)*self.price
         return price 
+    def total_price(self): 
+        price=self.price - self.discount()
+        return price
     def save(self, *args, **kwargs): # new
         if not self.slug:
             self.slug = slugify(self.name)
@@ -103,6 +106,7 @@ import random
 
     
 class Fps_Numbers(models.Model):
+    category=models.ForeignKey(Category,default=1,on_delete=models.CASCADE)
     name=models.CharField(max_length=100)
     details=models.CharField(max_length=50)
     value=models.PositiveIntegerField(default=0)

@@ -245,8 +245,7 @@ def order_edit(request,slug):
   
 def result(request):  
     gammes=Games.objects.all() 
-    eng=Fps_Numbers.objects.filter(name__icontains="Engineer")
-    prog=Fps_Numbers.objects.filter(name__icontains="Programmer")
+
     supplier=Supplier.objects.all()
     error=False
     if request.user.is_authenticated:
@@ -255,7 +254,8 @@ def result(request):
         if filter.exists():
             my_filter=Filters.objects.get(customer_id=request.user.id)
             similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor__in=my_filter.processor.all()).distinct()[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
-
+            eng=Fps_Numbers.objects.filter(name__icontains="Engineer",category=my_filter.category)
+            prog=Fps_Numbers.objects.filter(name__icontains="Programmer",category=my_filter.category)
         else:     
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home")) 
@@ -302,6 +302,8 @@ def result(request):
         filter=Filters.objects.filter(device=request.COOKIES["device"])
         if filter.exists():
             my_filter=Filters.objects.get(device=request.COOKIES["device"])
+            eng=Fps_Numbers.objects.filter(name__icontains="Engineer",category=my_filter.category)
+            prog=Fps_Numbers.objects.filter(name__icontains="Programmer",category=my_filter.category)
         if order.exists():
             my_order=Order.objects.get(device=request.COOKIES["device"],ordered=True,delivered=False)
             similar=Product.objects.filter(category=my_filter.category)[0:3]  | Product.objects.filter(processor__in=my_filter.processor.all()).distinct()[0:3]  | Product.objects.filter(type=my_filter.type)[0:3] 
