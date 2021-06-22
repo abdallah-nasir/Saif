@@ -102,6 +102,8 @@
                                   <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">product</th>
+                                    <th scope="col">Processor</th>
+
                                     <th scope="col">Category</th>
                                     <th scope="col">Type</th>
                                     <th scope="col">Edit</th>
@@ -113,6 +115,13 @@
                                   <tr>
                                     <th scope="row">{{forloop.counter}}</th>
                                     <td>{{i.name}}</td>
+                                   
+                                    {% if i.processor.count == 2 %}
+                                    <td>Amd-Intel</td>
+                                    {% else %}
+                                    <td>{{i.processor.first}}</td>
+                                    {% endif %}
+                                   
                                     <td>{{i.category.name}}</td>
                                     <td>{{i.type.name}}</td>
                                     <td> <a href="{% url 'home:edit' slug=i.slug %}" type="button" class="btn btn-primary">

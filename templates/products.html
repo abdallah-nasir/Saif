@@ -34,6 +34,9 @@ margin-top:4.5rem;
   position:right !important;
 
 }
+.card-img-top{
+max-height:10cm !important;
+}
 </style>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
@@ -67,9 +70,9 @@ margin-top:4.5rem;
     {% for i in products %}
 
 
-    <div class="col col-lg-6 col-md- col-sm-12">
-        <div class="card" style="width: 18rem;">
-          <img src="{{i.image}}" class="card-img-top" alt="{{i.name}}">
+    <div class="col col-lg-6 col-md-12 col-sm-12 ">
+        <div class="card" style="height:100%; width:auto;">
+          <img  src="{{i.image}}" class="card-img-top" alt="{{i.name}}">
           <div class="card-body">
             <h5 class="card-title">{{i.name}}</h5>
           </div>
@@ -97,7 +100,7 @@ margin-top:4.5rem;
         <br>
        <br>
      </div>
-   
+ 
      <!-- Modal -->
 <div class="modal fade mt-5" id="exampleModal-{{i.id}}"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -123,12 +126,14 @@ margin-top:4.5rem;
               <td>{{i.price}} EGP</td>
              
               <td>{{i.category}}</td>
-              {% if i.processor != 1 %}
+              
+              {% if i.processor.count == 2 %}
                 <td>Amd-Intel</td>
-{% else %}
-<td>{{i.processor.name}}</td>
-
-{% endif %}
+              {% else %}
+            <td>{{i.processor.first}}</td>
+           
+            {% endif %}
+           
             </tr>
            
           </tbody>
@@ -142,9 +147,10 @@ margin-top:4.5rem;
     </div>
   </div>
 </div> 
+  <br>
         {% endfor %}
       </div>
-      <a href="{% url 'home:result' %}" id="button" class="btn btn-primary ">Checkout Page</a>
+      <a href="{% url 'home:result' %}" id="button" class="btn btn-primary mt-2 mb-2">Checkout Page</a>
    
   </form>
 
