@@ -260,11 +260,11 @@ def result(request):
             messages.error(request,"you don't have order yet")
             return redirect(reverse("home:home")) 
         if order.exists():    
-            my_order=Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False)  
+            my_order=Order.objects.get(customer_id=request.user.id,ordered=True,delivered=False)      
             if my_order.products.count() < 1:
                 error=True                       
             for i in my_order.products.all():
-                if my_order.products.filter(name__icontains="ssd").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="cpu").exists() :
+                if my_order.products.filter(name__icontains="hard").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="processor") and my_order.products.filter(name__icontains="cooler") and my_order.products.filter(name__icontains="power supply").exists() :
                     error=False   
                 elif my_order.products.filter(type__name="Normal").exists():
                     error=True
