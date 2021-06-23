@@ -71,17 +71,18 @@ max-height:10cm !important;
 
 
     <div class="col col-lg-6 col-md-12 col-sm-12 ">
-        <div class="card" style="height:100%; width:auto;">
+        <div class="card" style="width:auto;">
           <img  src="{{i.image}}" class="card-img-top" alt="{{i.name}}">
           <div class="card-body">
             <h5 class="card-title">{{i.name}}</h5>
+            {{i.date_modified}}
           </div>
           {% if request.user.is_authenticated %}
-          <div ><span>after discount </span><span>{{i.total_price}} EGP </span></div>
-          <div ><span>before discount </span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span> {{i.price}} EGP</small></div>
+          <div ><span>After Discount </span><span>LE {{i.total_price}}</span></div>
+          <div ><span>Before Discount </span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span>LE {{i.price}}</small></div>
           {% else %}
-          <div ><span>price </span><span>{{i.price}} EGP </span></div>
-          <div ><span>our discount </span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span> {{i.discount}} EGP</small></div>
+          <div ><span>price </span><span>LE {{i.price}} </span></div>
+          <div ><span>Our Discount </span> <small class="pre-cost" style="font-size: 94%;"><span class="glyphicon glyphicon-usd"></span>LE {{i.discount}}</small></div>
           {% endif %}
           <br>
             <!-- <p class="card-text">Price: {{i.price}}</p> -->
@@ -123,7 +124,7 @@ max-height:10cm !important;
             </tr>
             <tr>
              
-              <td>{{i.price}} EGP</td>
+              <td>LE {{i.price}}</td>
              
               <td>{{i.category}}</td>
               

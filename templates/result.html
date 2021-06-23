@@ -70,7 +70,7 @@ margin-top:10rem !important;
         <td><a href="{% url 'home:order_edit' slug=i.slug %}">delete</a></td>
 
 
-        <td>${{i.price}}</td>
+        <td>LE {{i.price}}</td>
        
       </tr>
      
@@ -101,7 +101,7 @@ margin-top:10rem !important;
   
    <td></td>
    
-   <td>${{orders.total_price|floatformat:2}}</td>
+   <td>LE {{orders.total_price|floatformat:2}}</td>
 {% endif %}
 </tr>
    <tr class="total">
@@ -111,14 +111,14 @@ margin-top:10rem !important;
        <td></td>
        <td></td>
 
-    <td>${{orders.discount|floatformat:2}}</td>
+    <td>LE {{orders.discount|floatformat:2}}</td>
   
     {% else %}
   
     <td>Total Price</td>
     <td></td>
     <td></td>
-      <td>${{orders.total_price|floatformat:2}}</td>
+      <td>LE {{orders.total_price|floatformat:2}}</td>
       {% endif %}
       </tr>
 
@@ -129,7 +129,7 @@ margin-top:10rem !important;
           <td></td>
           <td></td>
    
-       <td>${{orders.after_price|floatformat:2}}</td>
+       <td>LE {{orders.after_price|floatformat:2}}</td>
      
          {% endif %}
          </tr>
@@ -139,7 +139,7 @@ margin-top:10rem !important;
    
     {% if request.user.is_authenticated %}
       
-    <button class="btn btn-primary" type="submit" {% if orders.products.count == 0 %}disabled{% endif %}>Checkout ${{orders.discount|floatformat:2}}</button>
+    <button class="btn btn-primary" type="submit" {% if orders.products.count == 0 %}disabled{% endif %}>Checkout LE {{orders.discount|floatformat:2}}</button>
 
     {% endif %}
   </form>
@@ -232,7 +232,7 @@ margin-top:10rem !important;
    <div class="col-md-6 d-md-flex align-items-md-stretch">
      <div class="count-box">
       
-      <i class="icofont-code"></i>
+      <i class="icofont-codLE "></i>
 
        <span data-toggle="counter-up">{{i.value}}</span><span>{{i.details}}</span>
 

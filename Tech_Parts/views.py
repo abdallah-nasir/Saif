@@ -143,13 +143,12 @@ def product(request):
             filter=Filters.objects.get(customer_id=request.user.id)
             my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
             if filter.type.name == "Normal":
-                product=Product.objects.filter(type=filter.type)
-            else:               
-                # for i in filter.processor.all():    
-                #     proc=i.name         
-                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all()).distinct()
-
-            paginator = Paginator(product,4) # Show 6 contacts per page.
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all()).distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
 
             page_number = request.GET.get('page')   
             page_obj = paginator.get_page(page_number)

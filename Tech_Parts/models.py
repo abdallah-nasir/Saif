@@ -71,12 +71,13 @@ class Product(models.Model):
     details=HTMLField()
     code=models.CharField(max_length=100,blank=True)
     slug=models.SlugField(blank=True,max_length=100,unique=True)
-    
+    date_modified=models.DateTimeField(auto_now=True)    
+  
     def __str__(self):  
-        return self.name  
-
+        return self.name      
+    
     def discount(self):
-        price=(10/100)*self.price
+        price=(10/100)*self.price   
         return price 
     def total_price(self): 
         price=self.price - self.discount()
@@ -85,6 +86,8 @@ class Product(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
+    
+    
 class Filters(models.Model):
     type=models.ForeignKey(Type,blank=True,null=True,on_delete=models.CASCADE)
     processor=models.ManyToManyField(Processor,blank=True)
