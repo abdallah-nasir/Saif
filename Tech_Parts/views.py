@@ -165,7 +165,7 @@ def product(request):
             if my_filter.type.name == "Normal":  
                 product=Product.objects.filter(type=my_filter.type)   
             else:  
-                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all()).distinct()
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all()).distinct().order_by("-date_modified","id")
             paginator = Paginator(product,4) # Show 25 contacts per page.
 
             page_number = request.GET.get('page')
