@@ -15,10 +15,9 @@ import json
 
 
 def home(request):
-    # msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
-    # msg.attach_file('templates/index.html')
-    # msg.content_subtype = "html"  
-    # msg.send()        
+    a=Type.objects.all()
+    for i in a:
+        Type.objects.create(name=i.name+"-copy",li=i.li)
     type=Type.objects.all().order_by("id")
     form=TypeFilter(request.POST or None)
     if form.is_valid():
