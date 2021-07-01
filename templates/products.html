@@ -50,7 +50,8 @@ max-height:10cm !important;
             <li>
               <div role="alert" class="alert alert-success alert-dismissible">
                 <button type="button" data-dismiss="alert" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                 {{ products.paginator.count }} {{message}}
+           <h2 style="text-align:center;">{{message}}</h2> 
+            <!-- {{ products.paginator.count }}  -->
               </div>
             </li>
 
@@ -75,7 +76,7 @@ max-height:10cm !important;
           <img  src="{{i.image}}" class="card-img-top" alt="{{i.name}}">
           <div class="card-body">
             <h5 class="card-title">{{i.name}}</h5>
-            {{i.date_modified}}
+            
           </div>
           {% if request.user.is_authenticated %}
           <div ><span>After Discount </span><span>LE {{i.total_price}}</span></div>
@@ -96,6 +97,10 @@ max-height:10cm !important;
             Add to Cart 
            
             </button>
+            <a  href="{% url 'home:cart_edit' slug=i.slug %}"  class="btn btn-danger mt-2 mb-2 {% if not i in orders.products.all %} disabled {% endif %}">
+              Remove From Cart 
+             
+              </a>
           
         </div>
         <br>

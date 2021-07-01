@@ -32,7 +32,7 @@ def home(request):
                     messages.success(request,f" products mathces with your choice ")
                     return redirect(reverse("home:product"))
                 else:
-                    messages.success(request,f"you choosed '{my_filter.type}'")  
+                    messages.success(request,f"'{my_filter.type}'")  
                     return redirect(reverse("home:category"))
             else:    
                 Filters.objects.create(customer_id=request.user.id,type=form.cleaned_data.get("type"))
@@ -41,7 +41,7 @@ def home(request):
                     messages.success(request,f" products mathces with your choice ")
                     return redirect(reverse("home:product"))    
                 else:            
-                    messages.success(request,f" you choosed '{form.cleaned_data.get('type')}'")
+                    messages.success(request,f"'{form.cleaned_data.get('type')}'")
                     return redirect(reverse("home:category"))
         else:
             if Filters.objects.filter(device=request.COOKIES["device"]).exists():
@@ -52,7 +52,7 @@ def home(request):
                     messages.success(request,f" products mathces with your choice ")
                     return redirect(reverse("home:product"))
                 else:
-                    messages.success(request,f"you choosed '{my_filter.type}'")
+                    messages.success(request,f"'{my_filter.type}'")
                     return redirect(reverse("home:category"))
             else:    
                 Filters.objects.create(device=request.COOKIES["device"],type=form.cleaned_data.get("type"))
@@ -61,7 +61,7 @@ def home(request):
                     messages.success(request,f" products mathces with your choice ")
                     return redirect(reverse("home:product"))
                 else:
-                    messages.success(request,f"you choosed '{my_filter.type}'")
+                    messages.success(request,f"'{my_filter.type}'")
                     return redirect(reverse("home:category"))
 
     context={"type":type,"form":form}
@@ -77,22 +77,22 @@ def category(request):
                
                 my_filter.category=form.cleaned_data.get("category")
                 my_filter.save()
-                messages.success(request,f"you choosed '{my_filter.category}'")
+                messages.success(request,f"'{my_filter.category}'")
                 return redirect(reverse("home:processor"))
             else:    
                 Filters.objects.create(customer_id=request.user.id,category=form.cleaned_data.get("category"))
-                messages.success(request,f"you choosed '{form.cleaned_data.get('category')}'")
+                messages.success(request,f"'{form.cleaned_data.get('category')}'")
                 return redirect(reverse("home:processor"))
         else:
             if Filters.objects.filter(device=request.COOKIES["device"]).exists():
                 my_filter=Filters.objects.get(device=request.COOKIES["device"])
                 my_filter.category=form.cleaned_data.get("category")
                 my_filter.save()
-                messages.success(request,f"you choosed '{my_filter.category}'")
+                messages.success(request,f"'{my_filter.category}'")
                 return redirect(reverse("home:processor"))
             else:    
                 Filters.objects.create(device=request.COOKIES["device"],category=form.cleaned_data.get("category"))
-                messages.success(request,f"you choosed '{form.cleaned_data.get('category')}'")
+                messages.success(request,f"'{form.cleaned_data.get('category')}'")
 
                 return redirect(reverse("home:processor"))    
     context={"categories":category}
@@ -132,7 +132,8 @@ def processor(request):
     context={"processor":processor}
     return render(request,"type.html",context)
 from django.core.paginator import Paginator
-def product(request):         
+def product(request):  
+          
     static=Product.objects.all()[0:2]
     # for i in static:
     #     i.const=True
@@ -146,7 +147,7 @@ def product(request):
             else:        
                 # for i in filter.processor.all():                                            
                 #     proc=i.name  
-                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all()).distinct().order_by("-date_modified","id")
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all()).exclude(type__name="Normal").distinct().order_by("-date_modified","id")
             paginator = Paginator(product,4) # Show 6 contacts per page.      
 
             page_number = request.GET.get('page')   
@@ -164,7 +165,7 @@ def product(request):
             if my_filter.type.name == "Normal":  
                 product=Product.objects.filter(type=my_filter.type)   
             else:  
-                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all()).distinct().order_by("-date_modified","id")
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all()).exclude(type__name="Normal").distinct().order_by("-date_modified","id")
             paginator = Paginator(product,4) # Show 25 contacts per page.
 
             page_number = request.GET.get('page')
@@ -173,7 +174,7 @@ def product(request):
             messages.error(request,"you dont have order yet")
             return redirect(reverse("home:home"))   
     form=OrderForm(request.POST or None)
-    if form.is_valid():  
+    if form.is_valid():      
         instance=form.save(commit=False)   
         if request.user.is_authenticated: 
             if Filters.objects.filter(customer_id=request.user.id).exists():
@@ -232,15 +233,38 @@ def order_edit(request,slug):
         print(order)
         product=Product.objects.get(slug=slug)
         for i in order:   
-            i.products.remove(product)      
+            i.products.remove(product)
+        messages.success(request,"product deleted successfully")
     else:
         order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
         print(order)
         product=Product.objects.get(slug=slug)
         for i in order:   
             i.products.remove(product)  
+        messages.success(request,"product deleted successfully")
+
     return redirect(reverse("home:result"))
   
+  
+def cart_edit(request,slug):
+    if request.user.is_authenticated:
+        
+        order=Order.objects.filter(customer_id=request.user.id,ordered=True,delivered=False)
+        print(order)
+        product=Product.objects.get(slug=slug)
+        for i in order:   
+            i.products.remove(product)
+        messages.success(request,"product deleted from cart")
+    else:
+      
+        order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+        print(order)
+        product=Product.objects.get(slug=slug)
+        for i in order:   
+            i.products.remove(product)  
+        messages.success(request,"product deleted from cart")
+
+    return redirect(reverse("home:product"))                    
 def result(request):  
     gammes=Games.objects.all() 
 

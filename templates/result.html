@@ -139,7 +139,7 @@ margin-top:10rem !important;
    
     {% if request.user.is_authenticated %}
       
-    <button class="btn btn-primary" type="submit" {% if orders.products.count == 0 %}disabled{% endif %}>Checkout LE {{orders.discount|floatformat:2}}</button>
+    <button class="btn btn-primary" type="submit" {% if orders.products.count == 0 %}disabled{% endif %}>Checkout LE {{orders.after_price|floatformat:2}}</button>
 
     {% endif %}
   </form>

@@ -5,7 +5,7 @@ from . import views
 
 app_name="Tech_Parts"
 urlpatterns = [
-    path('',views.home,name="home" ),
+    path('',views.home,name="home" ),       
     path("category/",views.category,name="category"),   
     path("category/processor/",views.processor,name="processor"),
     path("category/processor/product/",views.product,name="product"),
@@ -18,6 +18,7 @@ urlpatterns = [
     path("remove-similar/<str:id>/",views.remove_similar_product,name="remove-similar"),
    
     path("order/edit/<slug:slug>/",views.order_edit,name="order_edit"),    
+    path("cart/edit/<slug:slug>/",views.cart_edit,name="cart_edit"),    
 
     path("confirm/",views.confirm,name="confirm"),
 
