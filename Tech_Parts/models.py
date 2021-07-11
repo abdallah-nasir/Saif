@@ -33,7 +33,7 @@ class Processor(models.Model):
     name=models.CharField(max_length=50)
     image=models.CharField(max_length=3000)
     def __str__(self):
-        return self.name    
+        return self.name      
 
 @receiver(post_save, sender=User)
 def create_user_Customer(sender, instance, created, **kwargs):
@@ -52,16 +52,20 @@ class Customer(models.Model):
     
 class Supplier(models.Model): 
     name=models.CharField(max_length=50)
-    image=models.CharField(max_length=3000)
+    image=models.ImageField()
     phone=models.CharField(max_length=11)
     # email=models.EmailField(max_length=100)
     address=models.CharField(max_length=120)
     location=models.CharField(max_length=120)
     def __str__(self):
         return self.name
-    
+class Product_Filter(models.Model):
+    name=models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 class Product(models.Model):
     name=models.CharField(max_length=100)
+    filter=models.ForeignKey(Product_Filter,default=1,on_delete=models.CASCADE)
     image=models.CharField(max_length=3000)
     price=models.PositiveIntegerField(default=0)
     category=models.ForeignKey(Category,default=1,null=True,on_delete=models.SET_NULL)

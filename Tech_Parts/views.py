@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
 # Create your views here.
 import json
       
@@ -15,11 +17,13 @@ import json
 
 
 def home(request):
-    # a=Type.objects.all()
+    a=Product_Filter.objects.all()
     # for i in a:
-    #     Type.objects.create(name=i.name+"-copy",li=i.li)
+    #     product=Product.objects.create(name=f"{i.name} product",filter_id=i.id,image="asda",price=f"{i.id}",type_id=1,details="564")
+    #     product.processor.add(1)
+  
     type=Type.objects.all().order_by("id")
-    form=TypeFilter(request.POST or None)
+    form=TypeFilter(request.POST or None)  
     if form.is_valid():
       
         if request.user.is_authenticated:
@@ -30,7 +34,7 @@ def home(request):
                 my_filter.save()  
                 if my_filter.type.name == "Normal":
                     messages.success(request,f" products mathces with your choice ")
-                    return redirect(reverse("home:product"))
+                    return redirect(reverse("home:processor_filter"))
                 else:
                     messages.success(request,f"'{my_filter.type}'")  
                     return redirect(reverse("home:category"))
@@ -39,7 +43,7 @@ def home(request):
                 my_filter=Filters.objects.get(customer_id=request.user.id)
                 if my_filter.type.name == "Normal":
                     messages.success(request,f" products mathces with your choice ")
-                    return redirect(reverse("home:product"))    
+                    return redirect(reverse("home:processor_filter"))
                 else:            
                     messages.success(request,f"'{form.cleaned_data.get('type')}'")
                     return redirect(reverse("home:category"))
@@ -50,7 +54,7 @@ def home(request):
                 my_filter.save()  
                 if my_filter.type.name == "Normal":
                     messages.success(request,f" products mathces with your choice ")
-                    return redirect(reverse("home:product"))
+                    return redirect(reverse("home:processor_filter"))
                 else:
                     messages.success(request,f"'{my_filter.type}'")
                     return redirect(reverse("home:category"))
@@ -59,7 +63,7 @@ def home(request):
                 my_filter=Filters.objects.get(device=request.COOKIES["device"])
                 if my_filter.type.name == "Normal":
                     messages.success(request,f" products mathces with your choice ")
-                    return redirect(reverse("home:product"))
+                    return redirect(reverse("home:processor_filter"))
                 else:
                     messages.success(request,f"'{my_filter.type}'")
                     return redirect(reverse("home:category"))
@@ -110,12 +114,12 @@ def processor(request):
                     i.processor.set(request.POST.get("processor"))
                     i.save()   
                 messages.success(request,"Products mathches with your choice")
-                return redirect(reverse("home:product"))
+                return redirect(reverse("home:processor_filter"))
     
             else:  
                 Filters.objects.create(customer_id=request.user.id,processor=form.cleaned_data.get("processor"))
                 messages.success(request,"Products mathches with your choice")
-                return redirect(reverse("home:product"))
+                return redirect(reverse("home:processor_filter"))
         else: 
             if Filters.objects.filter(device=request.COOKIES["device"]).exists():
                 my_filter=Filters.objects.get(device=request.COOKIES["device"])
@@ -124,14 +128,670 @@ def processor(request):
                     i.processor.set(request.POST.get("processor"))
                     i.save()   
                 messages.success(request,"Products mathches with your choice")
-                return redirect(reverse("home:product"))
+                return redirect(reverse("home:processor_filter"))
             else:    
                 Filters.objects.create(device=request.COOKIES["device"],processor=form.cleaned_data.get("processor"))
                 messages.success(request,"Products mathches with your choice")
-                return redirect(reverse("home:product")) 
+                return redirect(reverse("home:processor_filter")) 
     context={"processor":processor}
     return render(request,"type.html",context)
-from django.core.paginator import Paginator
+def processor_filter(request):
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
+    if request.user.is_authenticated:
+        if Filters.objects.filter(customer_id=request.user.id).exists():
+            filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
+            if filter.type.name == "Normal":
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all(),filter__name="cpu").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
+
+            page_number = request.GET.get('page')   
+            page_obj = paginator.get_page(page_number)
+            # product=Product.objects.all()[0:10]   
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
+    else:   
+        filter=Filters.objects.filter(device=request.COOKIES["device"])
+        if filter.exists():
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
+            if my_filter.type.name == "Normal":  
+                product=Product.objects.filter(type=my_filter.type)   
+            else:  
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all(),filter__name="cpu").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
+        else:
+            messages.error(request,"you dont have order yet")
+            return redirect(reverse("home:home"))   
+    form=OrderForm(request.POST or None)
+    if form.is_valid():      
+        instance=form.save(commit=False)   
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+                    b=request.POST.getlist("products")
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
+                           
+                    # return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
+        else:
+            if Filters.objects.filter(device=request.COOKIES["device"]).exists():
+                # my_customer=Customer.objects.get(device=request.COOKIES["device"])
+                order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+                if order.exists():
+                    # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
+                    for i in order:  
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
+                else:    
+                    Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
+                    for i in order:
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result"))
+                  
+            else:
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("hme:home"))
+    context={"products":page_obj,"orders":my_order,"static":static}   
+    return render(request,"processor_filter.html",context)
+def gpu_filter(request):
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
+    if request.user.is_authenticated:
+        if Filters.objects.filter(customer_id=request.user.id).exists():
+            filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
+            if filter.type.name == "Normal":
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all(),filter__name="gpu").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
+
+            page_number = request.GET.get('page')   
+            page_obj = paginator.get_page(page_number)
+            # product=Product.objects.all()[0:10]   
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
+    else:   
+        filter=Filters.objects.filter(device=request.COOKIES["device"])
+        if filter.exists():
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
+            if my_filter.type.name == "Normal":  
+                product=Product.objects.filter(type=my_filter.type)   
+            else:  
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all(),filter__name="gpu").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
+        else:
+            messages.error(request,"you dont have order yet")
+            return redirect(reverse("home:home"))   
+    form=OrderForm(request.POST or None)
+    if form.is_valid():      
+        instance=form.save(commit=False)   
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+                    b=request.POST.getlist("products")
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
+                           
+                    # return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
+        else:
+            if Filters.objects.filter(device=request.COOKIES["device"]).exists():
+                # my_customer=Customer.objects.get(device=request.COOKIES["device"])
+                order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+                if order.exists():
+                    # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
+                    for i in order:  
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
+                else:    
+                    Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
+                    for i in order:
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result"))
+                  
+            else:
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("hme:home"))
+    context={"products":page_obj,"orders":my_order,"static":static}   
+    return render(request,"gpu_filter.html",context)
+
+def motherboard_filter(request):
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
+    if request.user.is_authenticated:
+        if Filters.objects.filter(customer_id=request.user.id).exists():
+            filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
+            if filter.type.name == "Normal":
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all(),filter__name="motherboard").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
+
+            page_number = request.GET.get('page')   
+            page_obj = paginator.get_page(page_number)
+            # product=Product.objects.all()[0:10]   
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
+    else:   
+        filter=Filters.objects.filter(device=request.COOKIES["device"])
+        if filter.exists():
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
+            if my_filter.type.name == "Normal":  
+                product=Product.objects.filter(type=my_filter.type)   
+            else:  
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all(),filter__name="motherboard").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
+        else:
+            messages.error(request,"you dont have order yet")
+            return redirect(reverse("home:home"))   
+    form=OrderForm(request.POST or None)
+    if form.is_valid():      
+        instance=form.save(commit=False)   
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+                    b=request.POST.getlist("products")
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
+                           
+                    # return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
+        else:
+            if Filters.objects.filter(device=request.COOKIES["device"]).exists():
+                # my_customer=Customer.objects.get(device=request.COOKIES["device"])
+                order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+                if order.exists():
+                    # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
+                    for i in order:  
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
+                else:    
+                    Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
+                    for i in order:
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result"))
+                  
+            else:
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("hme:home"))
+    context={"products":page_obj,"orders":my_order,"static":static}   
+    return render(request,"motherboard_filter.html",context)
+
+def ram_filter(request):
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
+    if request.user.is_authenticated:
+        if Filters.objects.filter(customer_id=request.user.id).exists():
+            filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
+            if filter.type.name == "Normal":
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all(),filter__name="ram").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
+
+            page_number = request.GET.get('page')   
+            page_obj = paginator.get_page(page_number)
+            # product=Product.objects.all()[0:10]   
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
+    else:   
+        filter=Filters.objects.filter(device=request.COOKIES["device"])
+        if filter.exists():
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
+            if my_filter.type.name == "Normal":  
+                product=Product.objects.filter(type=my_filter.type)   
+            else:  
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all(),filter__name="ram").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
+        else:
+            messages.error(request,"you dont have order yet")
+            return redirect(reverse("home:home"))   
+    form=OrderForm(request.POST or None)
+    if form.is_valid():      
+        instance=form.save(commit=False)   
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+                    b=request.POST.getlist("products")
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
+                           
+                    # return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
+        else:
+            if Filters.objects.filter(device=request.COOKIES["device"]).exists():
+                # my_customer=Customer.objects.get(device=request.COOKIES["device"])
+                order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+                if order.exists():
+                    # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
+                    for i in order:  
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
+                else:    
+                    Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
+                    for i in order:
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result"))
+                  
+            else:
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("hme:home"))
+    context={"products":page_obj,"orders":my_order,"static":static}   
+    return render(request,"ram_filter.html",context)
+
+def hard_filter(request):
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
+    if request.user.is_authenticated:
+        if Filters.objects.filter(customer_id=request.user.id).exists():
+            filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
+            if filter.type.name == "Normal":
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all(),filter__name="hard").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
+
+            page_number = request.GET.get('page')   
+            page_obj = paginator.get_page(page_number)
+            # product=Product.objects.all()[0:10]   
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
+    else:   
+        filter=Filters.objects.filter(device=request.COOKIES["device"])
+        if filter.exists():
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
+            if my_filter.type.name == "Normal":  
+                product=Product.objects.filter(type=my_filter.type)   
+            else:  
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all(),filter__name="hard").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
+        else:
+            messages.error(request,"you dont have order yet")
+            return redirect(reverse("home:home"))   
+    form=OrderForm(request.POST or None)
+    if form.is_valid():      
+        instance=form.save(commit=False)   
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+                    b=request.POST.getlist("products")
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
+                           
+                    # return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
+        else:
+            if Filters.objects.filter(device=request.COOKIES["device"]).exists():
+                # my_customer=Customer.objects.get(device=request.COOKIES["device"])
+                order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+                if order.exists():
+                    # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
+                    for i in order:  
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
+                else:    
+                    Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
+                    for i in order:
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result"))
+                  
+            else:
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("hme:home"))
+    context={"products":page_obj,"orders":my_order,"static":static}   
+    return render(request,"hard_filter.html",context)
+
+def cooler_filter(request):
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
+    if request.user.is_authenticated:
+        if Filters.objects.filter(customer_id=request.user.id).exists():
+            filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
+            if filter.type.name == "Normal":
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all(),filter__name="cooler").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
+
+            page_number = request.GET.get('page')   
+            page_obj = paginator.get_page(page_number)
+            # product=Product.objects.all()[0:10]   
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
+    else:   
+        filter=Filters.objects.filter(device=request.COOKIES["device"])
+        if filter.exists():
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
+            if my_filter.type.name == "Normal":  
+                product=Product.objects.filter(type=my_filter.type)   
+            else:  
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all(),filter__name="cooler").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
+        else:
+            messages.error(request,"you dont have order yet")
+            return redirect(reverse("home:home"))   
+    form=OrderForm(request.POST or None)
+    if form.is_valid():            
+        instance=form.save(commit=False)   
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+                    b=request.POST.getlist("products")
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
+                           
+                    # return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
+        else:
+            if Filters.objects.filter(device=request.COOKIES["device"]).exists():
+                # my_customer=Customer.objects.get(device=request.COOKIES["device"])
+                order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+                if order.exists():
+                    # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
+                    for i in order:  
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
+                else:    
+                    Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
+                    for i in order:
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result"))
+                  
+            else:
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("hme:home"))
+    context={"products":page_obj,"orders":my_order,"static":static}   
+    return render(request,"cooler_filter.html",context)
+
+def powersupply_filter(request):
+    static=Product.objects.all()[0:2]
+    # for i in static:
+    #     i.const=True
+    #     i.save()
+    if request.user.is_authenticated:
+        if Filters.objects.filter(customer_id=request.user.id).exists():
+            filter=Filters.objects.get(customer_id=request.user.id)
+            my_order,ordered=Order.objects.get_or_create(customer_id=request.user.id,ordered=True,delivered=False)
+            if filter.type.name == "Normal":
+                product=Product.objects.filter(type=filter.type)     
+            else:        
+                # for i in filter.processor.all():                                            
+                #     proc=i.name  
+                product=Product.objects.filter(category=filter.category,processor__in=filter.processor.all(),filter__name="powersupply").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 6 contacts per page.      
+
+            page_number = request.GET.get('page')   
+            page_obj = paginator.get_page(page_number)
+            # product=Product.objects.all()[0:10]   
+        else:    
+            messages.error(request,"you dont have order yet")     
+            return redirect(reverse("home:home")) 
+    else:   
+        filter=Filters.objects.filter(device=request.COOKIES["device"])
+        if filter.exists():
+            my_filter=Filters.objects.get(device=request.COOKIES["device"])           
+            my_order,created=Order.objects.get_or_create(device=request.COOKIES["device"],ordered=True,delivered=False)
+ 
+            if my_filter.type.name == "Normal":  
+                product=Product.objects.filter(type=my_filter.type)   
+            else:  
+                product=Product.objects.filter(category=my_filter.category,processor__in=my_filter.processor.all(),filter__name="powersupply").exclude(type__name="Normal").distinct().order_by("-date_modified","id")
+            paginator = Paginator(product,4) # Show 25 contacts per page.
+
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)        
+        else:
+            messages.error(request,"you dont have order yet")
+            return redirect(reverse("home:home"))   
+    form=OrderForm(request.POST or None)
+    if form.is_valid():      
+        instance=form.save(commit=False)   
+        if request.user.is_authenticated: 
+            if Filters.objects.filter(customer_id=request.user.id).exists():
+                customer=Customer.objects.get(name=request.user)
+                order=Order.objects.filter(customer=customer,ordered=True,delivered=False)
+                if order.exists():
+                    my_order=Order.objects.get(customer=customer,ordered=True,delivered=False)
+                    b=request.POST.getlist("products")
+                    for i in order: 
+                        i.products.add(request.POST.get("products")) 
+                        i.save()    
+                        # for d in b:
+                        #     i.products.add(d)
+                        #     i.save()
+                           
+                    # return redirect(reverse("home:result"))
+                else:
+                    Order.objects.create(customer=customer,ordered=True,delivered=False)
+                    for i in order:   
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result")) 
+            else: 
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("home:home"))
+                
+            
+        else:
+            if Filters.objects.filter(device=request.COOKIES["device"]).exists():
+                # my_customer=Customer.objects.get(device=request.COOKIES["device"])
+                order=Order.objects.filter(device=request.COOKIES["device"],ordered=True,delivered=False)
+                if order.exists():
+                    # print(form.cleaned_data.get("products"))
+                    b=request.POST.getlist("products")
+                    for i in order:  
+                        i.products.add(request.POST.get("products")) 
+                        i.save() 
+                                      
+                    # return redirect(reverse("home:result"))
+                else:    
+                    Order.objects.create(device=request.COOKIES['device'],ordered=True,delivered=False)
+                    for i in order:
+                        i.products.set(form.cleaned_data.get("products"))
+                        i.save()
+                    # return redirect(reverse("home:result"))
+                  
+            else:
+                messages.error(request,"you dont have order yet")
+                return redirect(reverse("hme:home"))
+    context={"products":page_obj,"orders":my_order,"static":static}   
+    return render(request,"powersupply_filter.html",context)
+
 def product(request):  
           
     static=Product.objects.all()[0:2]
@@ -264,7 +924,7 @@ def cart_edit(request,slug):
             i.products.remove(product)  
         messages.success(request,"product deleted from cart")
 
-    return redirect(reverse("home:product"))                    
+    return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 def result(request):  
     gammes=Games.objects.all() 
 
