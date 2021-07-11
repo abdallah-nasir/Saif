@@ -97,7 +97,7 @@ import os
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     } 
-# }           
+# }              
    
 # DATABASES = {
 
@@ -136,7 +136,7 @@ DATABASES = {
         'PORT': '5432',
 
     }
-
+      
 }
 
 # DATABASE_URL= "postgres://obyidxalwosihe:20261adbae0585b0bfe99a6da4e1b13203f63bfe1f33da62a05a446a22022851@ec2-34-195-233-155.compute-1.amazonaws.com:5432/d84157ac50tjvp"
