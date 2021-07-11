@@ -119,7 +119,7 @@ import os
 
 # }
 
-DATABASES = {
+DATABASES = {   
 
     'default': {
 
