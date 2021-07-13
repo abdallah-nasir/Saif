@@ -946,7 +946,7 @@ def result(request):
             if my_order.products.count() < 1:
                 error=True                       
             for i in my_order.products.all():
-                if my_order.products.filter(name__icontains="hard").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="processor") and my_order.products.filter(name__icontains="cooler") and my_order.products.filter(name__icontains="power supply").exists() :
+                if my_order.products.filter(name__icontains="hard").exists() and my_order.products.filter(name__icontains="gpu").exists() and my_order.products.filter(name__icontains="motherboard").exists() and my_order.products.filter(name__icontains="ram").exists() and my_order.products.filter(name__icontains="processor") and my_order.products.filter(name__icontains="cooler") and my_order.products.filter(name__icontains="powersupply").exists() :
                     error=False   
                 elif my_order.products.filter(type__name="Normal").exists():
                     error=True

@@ -189,7 +189,7 @@ EMAIL_PORT = '587'
 from django.contrib.messages import constants as messages        
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
-}
+}  
 # ICONS={
 #     "gammer":"ri-gamepad-fill",
 #     "engineer":"ri-compasses-2-line",
@@ -198,6 +198,7 @@ MESSAGE_TAGS = {
 #     "normal":"ri-database-2-line",
 # }
 #allauth 
+
 SITE_ID=1
 LOGIN_REDIRECT_URL ="/"
 ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"

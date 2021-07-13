@@ -22,7 +22,7 @@ class Category(models.Model):
     name=models.CharField(max_length=50)
        
     def __str__(self):
-        return self.name  
+        return str(self.name)  
     
     def get_absolute_url(request,self):
         name=request.user
@@ -35,15 +35,15 @@ class Processor(models.Model):
     def __str__(self):
         return self.name      
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User)   
 def create_user_Customer(sender, instance, created, **kwargs):
     if created:
         Customer.objects.create(name=instance)
         
 class Customer(models.Model):
     device=models.CharField(max_length=120,blank=True,null=True)
-    name=models.OneToOneField(User,default=1,on_delete=models.CASCADE)
-    category=models.ForeignKey(Category,null=True,on_delete=models.SET_NULL)
+    name=models.OneToOneField(User,default=1,on_delete=models.CASCADE)          
+    category=models.ForeignKey(Category,null=True,on_delete=models.SET_NULL)  
     email=models.EmailField(max_length=50)
     phone=models.CharField(max_length=11)
     
@@ -72,7 +72,7 @@ class Product(models.Model):
     processor=models.ManyToManyField(Processor)
     type=models.ForeignKey(Type,default=6,null=True,on_delete=models.SET_NULL)
     
-    details=HTMLField()
+    details=HTMLField() 
     code=models.CharField(max_length=100,blank=True)
     slug=models.SlugField(blank=True,max_length=100,unique=True)
     date_modified=models.DateTimeField(auto_now=True)    
